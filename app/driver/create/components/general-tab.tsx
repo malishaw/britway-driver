@@ -4,6 +4,9 @@ import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import Swal from 'sweetalert2';
+
+
 
 import axios from "axios";
 
@@ -30,33 +33,41 @@ import { IDriverData } from "@/app/typings/interfaces/driverData";
 import { error } from "console";
 
 const formSchema = z.object({
-  displayName: z.string().min(2, {
-    message: "Display name must be at least 2 characters.",
-  }),
-  uniqueId: z.string().min(1, {
-    message: "Unique ID is required.",
-  }),
-  email: z.string().email({
-    message: "Invalid email address.",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
-  }),
-  confirmPassword: z.string().min(8, {
-    message: "Confirm password must be at least 8 characters.",
-  }),
+  displayName: z.string(),
+  // .min(2, {
+  //   message: "Display name must be at least 2 characters.",
+  // }),
+  uniqueId: z.string(),
+  // .min(1, {
+  //   message: "Unique ID is required.",
+  // }),
+  email: z.string(),
+  // .email({
+  //   message: "Invalid email address.",
+  // }),
+  password: z.string(),
+  // .min(8, {
+  //   message: "Password must be at least 8 characters.",
+  // }),
+  confirmPassword: z.string(),
+  // .min(8, {
+  //   message: "Confirm password must be at least 8 characters.",
+  // }),
   // photo: z.string().url({
   //     message: "Photo must be a valid URL.",
   // }),
-  language: z.string().min(2, {
-    message: "Language must be at least 2 characters.",
-  }),
-  timezone: z.string().min(2, {
-    message: "Timezone is required.",
-  }),
-  fleetOperator: z.string().min(2, {
-    message: "Fleet operator is required.",
-  }),
+  language: z.string(),
+  // .min(2, {
+  //   message: "Language must be at least 2 characters.",
+  // }),
+  timezone: z.string(),
+  // .min(2, {
+  //   message: "Timezone is required.",
+  // }),
+  fleetOperator: z.string(),
+  // .min(2, {
+  //   message: "Fleet operator is required.",
+  // }),
 });
 
 type FormType = z.infer<typeof formSchema>;
@@ -67,6 +78,7 @@ export interface IGeneralTabProps {
 }
 
 const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
+ 
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -108,18 +120,33 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
     if (data?.id) {
       axios.put(`/api/driver/${data.id}`, requestData).then(
         (response) => {
+          console.log('Updated successful>>>>');
           onCreate(response.data);
+         
         },
         (error) => {
+       
           console.log(error);
         }
       );
     } else {
       axios.post("/api/driver", requestData).then(
         (response) => {
+          console.log('Create successful>>>>');
           onCreate(response.data);
+          Swal.fire({
+            icon: 'success',
+            title: 'Created successfully',
+            text: 'The driver data has been created.',
+          });
+       
         },
         (error) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while creating the driver data.',
+          });
           console.log(error);
         }
       );
@@ -182,7 +209,10 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="Password" {...field} />
+                    <Input 
+                     type="password"
+                     placeholder="Password"
+                     {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

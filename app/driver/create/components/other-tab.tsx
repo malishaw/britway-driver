@@ -27,45 +27,58 @@ import { IDriverData } from "@/app/typings/interfaces/driverData";
 import axios from "axios";
 
 const formSchema = z.object({
-  nationalInsuranceNumber: z.string().min(5, {
-    message: "National Insurance Number must be at least 5 characters.",
-  }),
-  bankAccountDetails: z.string().min(5, {
-    message: "Bank account details must be at least 5 characters.",
-  }),
-  insurance: z.string().min(2, {
-    message: "Insurance details must be at least 2 characters.",
-  }),
-  insuranceExpiryDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
-    message: "Insurance expiry date must be in the format YYYY-MM-DD.",
-  }),
-  drivingLicence: z.string().min(5, {
-    message: "Driving licence number must be at least 5 characters.",
-  }),
-  drivingLicenceExpiryDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
-    message: "Driving licence expiry date must be in the format YYYY-MM-DD.",
-  }),
-  PCOLicence: z.string().min(5, {
-    message: "PCO licence number must be at least 5 characters.",
-  }),
-  PCOLicenceExpiryDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
-    message: "PCO licence expiry date must be in the format YYYY-MM-DD.",
-  }),
-  PHVLicence: z.string().min(5, {
-    message: "PHV licence number must be at least 5 characters.",
-  }),
-  PHVLicenceExpiryDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
-    message: "PHV licence expiry date must be in the format YYYY-MM-DD.",
-  }),
-  driverActivityStatus: z.enum(["Available", "Unavailable"], {
-    message: "Driver activity status must be either 'active' or 'inactive'.",
-  }),
-  additionalFiles: z.string().min(2, {
-    message: "Title details must be at least 2 characters.",
-  }),
-  file: z.string().min(2, {
-    message: "file details must be at least 2 characters.",
-  }),
+  nationalInsuranceNumber: z.string(),
+  // .min(5, {
+  //   message: "National Insurance Number must be at least 5 characters.",
+  // }),
+  bankAccountDetails: z.string(),
+  // .min(5, {
+  //   message: "Bank account details must be at least 5 characters.",
+  // }),
+  insurance: z.string(),
+  // .min(2, {
+  //   message: "Insurance details must be at least 2 characters.",
+  // }),
+  insuranceExpiryDate: z.string(),
+  // .regex(/^\d{4}-\d{2}-\d{2}$/, {
+  //   message: "Insurance expiry date must be in the format YYYY-MM-DD.",
+  // }),
+  drivingLicence: z.string(),
+  // .min(5, {
+  //   message: "Driving licence number must be at least 5 characters.",
+  // }),
+  drivingLicenceExpiryDate: z.string(),
+  // .regex(/^\d{4}-\d{2}-\d{2}$/, {
+  //   message: "Driving licence expiry date must be in the format YYYY-MM-DD.",
+  // }),
+  PCOLicence: z.string(),
+  // .min(5, {
+  //   message: "PCO licence number must be at least 5 characters.",
+  // }),
+  PCOLicenceExpiryDate: z.string(),
+  // .regex(/^\d{4}-\d{2}-\d{2}$/, {
+  //   message: "PCO licence expiry date must be in the format YYYY-MM-DD.",
+  // }),
+  PHVLicence: z.string(),
+  // .min(5, {
+  //   message: "PHV licence number must be at least 5 characters.",
+  // }),
+  PHVLicenceExpiryDate: z.string(),
+  // .regex(/^\d{4}-\d{2}-\d{2}$/, {
+  //   message: "PHV licence expiry date must be in the format YYYY-MM-DD.",
+  // }),
+  driverActivityStatus: z.enum(["Available", "Unavailable"]),
+  //    {
+  //   message: "Driver activity status must be either 'active' or 'inactive'.",
+  // }),
+  additionalFiles: z.string(),
+  // .min(2, {
+  //   message: "Title details must be at least 2 characters.",
+  // }),
+  file: z.string(),
+  // .min(2, {
+  //   message: "file details must be at least 2 characters.",
+  // }),
 });
 type FormType = z.infer<typeof formSchema>;
 
@@ -116,19 +129,79 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
     }
   }
 
-  //   const fileInputRef = React.useRef(null);
+    // const fileInputRef = React.useRef(null);
 
-  //   const handleClick = () => {
-  //     fileInputRef.current.click();
-  //   };
+    // const handleClick = () => {
+    //   fileInputRef.current.click();
+    // };
 
-  //   const handleFileChange = (event) => {
-  //     const file = event.target.files[0];
-  //     if (file) {
-  //       console.log("Selected file:", file);
-  //     }
-  //   };
+    // const handleFileChange = (event) => {
+    //   const file = event.target.files[0];
+    //   if (file) {
+    //     console.log("Selected file:", file);
+    //   }
+    // };
 
+
+
+  // function onSubmit(values: FormType) {
+  //   if (data?.generalData) {
+  //     const requestData: IDriverData = {
+  //       generalData: {
+  //         ...data?.generalData,
+  //       },
+  //       personalData: {
+  //         ...data?.personalData,
+  //       },
+  //       otherData: values,
+  //     };
+  
+  //     axios.put(`/api/driver/${data.id}`, requestData).then(
+  //       (response) => {
+  //         window.alert("Data submitted successfully!");
+  //         onCreate(response.data);
+  //       },
+  //       (error) => {
+  //         window.alert("An error occurred while submitting the data.");
+  //         console.log(error);
+  //       }
+  //     );
+  //     return;
+  //   }
+  // }
+
+  // function onSubmit(values: FormType) {
+  //   console.log("onSubmit called with values:", values); // Debug log
+  //   if (data?.generalData) {
+  //     const requestData: IDriverData = {
+  //       generalData: {
+  //         ...data?.generalData,
+  //       },
+  //       personalData: {
+  //         ...data?.personalData,
+  //       },
+  //       otherData: values,
+  //     };
+  
+  //     console.log("Request Data:", requestData); // Debug log
+  
+  //     axios.put(`/api/driver/${data.id}`, requestData).then(
+  //       (response) => {
+  //         console.log("API call successful:", response); // Debug log
+  //         window.alert("Data submitted successfully!");
+  //         onCreate(response.data);
+  //       },
+  //       (error) => {
+  //         console.error("API call failed:", error); // Debug log
+  //         window.alert("An error occurred while submitting the data.");
+  //       }
+  //     );
+  //   } else {
+  //     console.warn("Data is missing or incomplete."); // Debug log
+  //   }
+  // }
+  
+  
   useEffect(() => {
     if (data?.otherData) {
       form.reset(data.otherData);
@@ -299,36 +372,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
               )}
             />
           </div>
-          {/*<div className="grid grid-cols-2 gap-4">*/}
-          {/*    <FormField*/}
-          {/*        control={form.control}*/}
-          {/*        name="username"*/}
-          {/*        render={({ field }) => (*/}
-          {/*            <FormItem>*/}
-          {/*                <FormLabel>Driver Income(%)</FormLabel>*/}
-          {/*                <FormControl>*/}
-          {/*                    <Input placeholder="Driver Income(%)" {...field} />*/}
-          {/*                </FormControl>*/}
-
-          {/*                <FormMessage />*/}
-          {/*            </FormItem>*/}
-          {/*        )}*/}
-          {/*    />*/}
-          {/*    <FormField*/}
-          {/*        name="uniqueId"*/}
-          {/*        control={form.control}*/}
-
-          {/*        render={({ field }) => (*/}
-          {/*            <FormItem>*/}
-          {/*                <FormLabel>Bace Address</FormLabel>*/}
-          {/*                <FormControl>*/}
-          {/*                    <Input placeholder="Bace Address" {...field} />*/}
-          {/*                </FormControl>*/}
-          {/*                <FormMessage />*/}
-          {/*            </FormItem>*/}
-          {/*        )}*/}
-          {/*    />*/}
-          {/*</div>*/}
+    
           <FormField
             name="driverActivityStatus"
             control={form.control}
