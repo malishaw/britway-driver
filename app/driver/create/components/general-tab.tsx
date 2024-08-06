@@ -32,42 +32,43 @@ import { IDriverGeneralData } from "@/app/typings";
 import { IDriverData } from "@/app/typings/interfaces/driverData";
 import { error } from "console";
 
+
 const formSchema = z.object({
-  displayName: z.string(),
-  // .min(2, {
-  //   message: "Display name must be at least 2 characters.",
-  // }),
-  uniqueId: z.string(),
-  // .min(1, {
-  //   message: "Unique ID is required.",
-  // }),
-  email: z.string(),
-  // .email({
-  //   message: "Invalid email address.",
-  // }),
-  password: z.string(),
-  // .min(8, {
-  //   message: "Password must be at least 8 characters.",
-  // }),
-  confirmPassword: z.string(),
-  // .min(8, {
-  //   message: "Confirm password must be at least 8 characters.",
-  // }),
+  displayName: z.string()
+  .min(2, {
+    message: "Display name must be at least 2 characters.",
+  }),
+  uniqueId: z.string().
+  min(1, {
+    message: "Unique ID is required.",
+  }),
+  email: z.string().
+  email({
+    message: "Invalid email address.",
+  }),
+  password: z.string().
+  min(8, {
+    message: "Password must be at least 8 characters.",
+  }),
+  confirmPassword: z.string()
+  .min(8, {
+    message: "Confirm password must be at least 8 characters.",
+  }),
   // photo: z.string().url({
   //     message: "Photo must be a valid URL.",
   // }),
-  language: z.string(),
-  // .min(2, {
-  //   message: "Language must be at least 2 characters.",
-  // }),
-  timezone: z.string(),
-  // .min(2, {
-  //   message: "Timezone is required.",
-  // }),
-  fleetOperator: z.string(),
-  // .min(2, {
-  //   message: "Fleet operator is required.",
-  // }),
+  language: z.string()
+  .min(2, {
+    message: "Language must be at least 2 characters.",
+  }),
+  timezone: z.string()
+  .min(2, {
+    message: "Timezone is required.",
+  }),
+  fleetOperator: z.string()
+  .min(2, {
+    message: "Fleet operator is required.",
+  }),
 });
 
 type FormType = z.infer<typeof formSchema>;
