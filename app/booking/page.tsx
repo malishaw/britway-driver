@@ -8,6 +8,7 @@ import { BookingTable } from "../components/booking-table";
 import { type Booking } from "../typings";
 
 export default function Booking() {
+  console.log("abc")
   const fileInput = useRef<HTMLInputElement>(null);
 
   const { data, excelToData } = useExcelData();
