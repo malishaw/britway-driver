@@ -15,7 +15,7 @@ export default function DriverCreate() {
   return (
     <div className="flex flex-1 flex-col gap-4">
       <div className="flex items-center">
-        <h1 className="text-lg font-semibold md:text-2xl">Add New Driver1</h1>
+        <h1 className="text-lg font-semibold md:text-2xl">Add New Driver</h1>
       </div>
       <div
         className="flex flex-1 p-4 rounded-lg border border-dashed shadow-sm"
