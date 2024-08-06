@@ -75,8 +75,8 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
       email: "",
       password: "",
       confirmPassword: "",
-      photo: "",
-      status: "Approved",
+      // photo: "",
+      // status: "Approved",
       language: "English",
       timezone: "UTC+01:00 London",
       fleetOperator: "Unassigned",
@@ -207,7 +207,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
             />
           </div>
 
-          <FormField
+          {/* <FormField
             name="photo"
             control={form.control}
             render={({ field }) => (
@@ -219,9 +219,9 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
-          <FormField
+          {/* <FormField
             name="status"
             control={form.control}
             render={({ field }) => (
@@ -248,7 +248,8 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
+
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
               name="language"
