@@ -21,54 +21,70 @@ import { IDriverData } from "@/app/typings/interfaces/driverData";
 import axios from "axios";
 
 const formSchema = z.object({
-  title: z.string().min(2, {
-    message: "Title must be at least 2 characters.",
-  }),
-  firstName: z.string().min(2, {
-    message: "First name must be at least 2 characters.",
-  }),
-  lastName: z.string().min(2, {
-    message: "Last name must be at least 2 characters.",
-  }),
-  dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
-    message: "Date of birth must be in the format YYYY-MM-DD.",
-  }),
-  mobileNumber: z.string().regex(/^\d{10,15}$/, {
-    message: "Mobile number must be between 10 and 15 digits.",
-  }),
-  telephoneNumber: z.string().regex(/^\d{10,15}$/, {
-    message: "Telephone number must be between 10 and 15 digits.",
-  }),
-  emergencyNumber: z.string().regex(/^\d{10,15}$/, {
-    message: "Emergency number must be between 10 and 15 digits.",
-  }),
-  address: z.string().min(5, {
-    message: "Address must be at least 5 characters.",
-  }),
-  city: z.string().min(2, {
-    message: "City must be at least 2 characters.",
-  }),
-  postCode: z.string().regex(/^\d{2,10}$/, {
-    message: "Company number must be between 2 and 10 digits.",
-  }),
-  county: z.string().min(2, {
-    message: "County must be at least 2 characters.",
-  }),
-  country: z.string().min(2, {
-    message: "Country must be at least 2 characters.",
-  }),
-  companyName: z.string().min(2, {
-    message: "Company name must be at least 2 characters.",
-  }),
-  companyNumber: z.string().regex(/^\d{2,10}$/, {
-    message: "Company number must be between 2 and 10 digits.",
-  }),
-  companyVatNumber: z.string().regex(/^\d{2,15}$/, {
-    message: "Company VAT number must be between 2 and 15 digits.",
-  }),
-  note: z.string().min(2, {
-    message: "Note must be at least 2 characters.",
-  }),
+  title: z.string(),
+  // .min(2, {
+  //   message: "Title must be at least 2 characters.",
+  // }),
+  firstName: z.string(),
+  // .min(2, {
+  //   message: "First name must be at least 2 characters.",
+  // }),
+  lastName: z.string(),
+  // .min(2, {
+  //   message: "Last name must be at least 2 characters.",
+  // }),
+  dateOfBirth: z.string(),
+  // .regex(/^\d{4}-\d{2}-\d{2}$/, {
+  //   message: "Date of birth must be in the format YYYY-MM-DD.",
+  // }),
+  mobileNumber: z.string(),
+  // .regex(/^\d{10,15}$/, {
+  //   message: "Mobile number must be between 10 and 15 digits.",
+  // }),
+  telephoneNumber: z.string(),
+  // .regex(/^\d{10,15}$/, {
+  //   message: "Telephone number must be between 10 and 15 digits.",
+  // }),
+  emergencyNumber: z.string(),
+  // .regex(/^\d{10,15}$/, {
+  //   message: "Emergency number must be between 10 and 15 digits.",
+  // }),
+  address: z.string(),
+  // .min(5, {
+  //   message: "Address must be at least 5 characters.",
+  // }),
+  city: z.string(),
+  // .min(2, {
+  //   message: "City must be at least 2 characters.",
+  // }),
+  postCode: z.string(),
+  // .regex(/^\d{2,10}$/, {
+  //   message: "Company number must be between 2 and 10 digits.",
+  // }),
+  county: z.string(),
+  // .min(2, {
+  //   message: "County must be at least 2 characters.",
+  // }),
+  country: z.string(),
+  // .min(2, {
+  //   message: "Country must be at least 2 characters.",
+  // }),
+  companyName: z.string(),
+  // .min(2, {
+  //   message: "Company name must be at least 2 characters.",
+  // }),
+  companyNumber: z.string(),
+  // .regex(/^\d{2,10}$/, {
+  //   message: "Company number must be between 2 and 10 digits.",
+  // }),
+  companyVatNumber: z.string(),
+  // .regex(/^\d{2,15}$/, {
+  //   message: "Company VAT number must be between 2 and 15 digits.",
+  // }),
+  note: z.string(),
+  // .min(2, {
+  //   message: "Note must be at least 2 characters.",
+  // }),
 });
 
 type FormType = z.infer<typeof formSchema>;

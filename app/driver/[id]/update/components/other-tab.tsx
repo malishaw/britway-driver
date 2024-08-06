@@ -28,45 +28,58 @@ import { IDriverData } from "@/app/typings/interfaces/driverData";
 import axios from "axios";
 
 const formSchema = z.object({
-  nationalInsuranceNumber: z.string().min(5, {
-    message: "National Insurance Number must be at least 5 characters.",
-  }),
-  bankAccountDetails: z.string().min(5, {
-    message: "Bank account details must be at least 5 characters.",
-  }),
-  insurance: z.string().min(2, {
-    message: "Insurance details must be at least 2 characters.",
-  }),
-  insuranceExpiryDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
-    message: "Insurance expiry date must be in the format YYYY-MM-DD.",
-  }),
-  drivingLicence: z.string().min(5, {
-    message: "Driving licence number must be at least 5 characters.",
-  }),
-  drivingLicenceExpiryDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
-    message: "Driving licence expiry date must be in the format YYYY-MM-DD.",
-  }),
-  PCOLicence: z.string().min(5, {
-    message: "PCO licence number must be at least 5 characters.",
-  }),
-  PCOLicenceExpiryDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
-    message: "PCO licence expiry date must be in the format YYYY-MM-DD.",
-  }),
-  PHVLicence: z.string().min(5, {
-    message: "PHV licence number must be at least 5 characters.",
-  }),
-  PHVLicenceExpiryDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
-    message: "PHV licence expiry date must be in the format YYYY-MM-DD.",
-  }),
-  driverActivityStatus: z.enum(["Available", "Unavailable"], {
-    message: "Driver activity status must be either 'active' or 'inactive'.",
-  }),
-  additionalFiles: z.string().min(2, {
-    message: "Title details must be at least 2 characters.",
-  }),
-  file: z.string().min(2, {
-    message: "file details must be at least 2 characters.",
-  }),
+  nationalInsuranceNumber: z.string(),
+  // .min(5, {
+  //   message: "National Insurance Number must be at least 5 characters.",
+  // }),
+  bankAccountDetails: z.string(),
+  // .min(5, {
+  //   message: "Bank account details must be at least 5 characters.",
+  // }),
+  insurance: z.string(),
+  // .min(2, {
+  //   message: "Insurance details must be at least 2 characters.",
+  // }),
+  insuranceExpiryDate: z.string(),
+  // .regex(/^\d{4}-\d{2}-\d{2}$/, {
+  //   message: "Insurance expiry date must be in the format YYYY-MM-DD.",
+  // }),
+  drivingLicence: z.string(),
+  // .min(5, {
+  //   message: "Driving licence number must be at least 5 characters.",
+  // }),
+  drivingLicenceExpiryDate: z.string(),
+  // .regex(/^\d{4}-\d{2}-\d{2}$/, {
+  //   message: "Driving licence expiry date must be in the format YYYY-MM-DD.",
+  // }),
+  PCOLicence: z.string(),
+  // .min(5, {
+  //   message: "PCO licence number must be at least 5 characters.",
+  // }),
+  PCOLicenceExpiryDate: z.string(),
+  // .regex(/^\d{4}-\d{2}-\d{2}$/, {
+  //   message: "PCO licence expiry date must be in the format YYYY-MM-DD.",
+  // }),
+  PHVLicence: z.string(),
+  // .min(5, {
+  //   message: "PHV licence number must be at least 5 characters.",
+  // }),
+  PHVLicenceExpiryDate: z.string(),
+  // .regex(/^\d{4}-\d{2}-\d{2}$/, {
+  //   message: "PHV licence expiry date must be in the format YYYY-MM-DD.",
+  // }),
+  driverActivityStatus: z.enum(["Available", "Unavailable"]),
+  //    {
+  //   message: "Driver activity status must be either 'active' or 'inactive'.",
+  // }),
+  additionalFiles: z.string(),
+  // .min(2, {
+  //   message: "Title details must be at least 2 characters.",
+  // }),
+  // file: z.string().min(2, {
+  //   message: "file details must be at least 2 characters.",
+  // }),
+
 });
 type FormType = z.infer<typeof formSchema>;
 
@@ -90,7 +103,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       PHVLicenceExpiryDate: "",
       driverActivityStatus: "Unavailable",
       additionalFiles: "",
-      file: "",
+      // file: "",
     },
   });
 
@@ -103,7 +116,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
         personalData: {
           ...data?.personalData,
         },
-        otherData: values,
+        // otherData: values,
       };
       axios.put(`/api/driver/${data.id}`, requestData).then(
         (response) => {
@@ -373,7 +386,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               name="file"
               control={form.control}
               render={({ field }) => (
@@ -388,7 +401,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
           </div>
 
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
