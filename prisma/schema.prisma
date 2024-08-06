@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model DriverData {
+
+  id           String             @id @default(auto()) @map("_id") @db.ObjectId
+  isDeleted    Boolean?
+
+  generalData  DriverGeneralData
+  otherData    DriverOtherData?
+  personalData DriverPersonalData?
+}
+
+type DriverGeneralData {
+  displayName   String
+  uniqueId      String
+  email         String
+  password      String
+  language      String
+  timezone      String
+  fleetOperator String
+}
+
+type DriverOtherData {
+  nationalInsuranceNumber  String?
+  bankAccountDetails       String?
+  insurance                String?
+  insuranceExpiryDate      String?
+  drivingLicence           String?
+  drivingLicenceExpiryDate String?
+  PCOLicence               String?
+  PCOLicenceExpiryDate     String?
+  PHVLicence               String?
+  PHVLicenceExpiryDate     String?
+  driverActivityStatus     String?
+  additionalFiles          String?
+  file                     String?
+}
+
+type DriverPersonalData {
+  title            String?
+  firstName        String?
+  lastName         String?
+  dateOfBirth      String?
+  mobileNumber     String?
+  telephoneNumber  String?
+  emergencyNumber  String?
+  address          String?
+  city             String?
+  postCode         String?
+  county           String?
+  country          String?
+  companyName      String?
+  companyNumber    String?
+  companyVatNumber String?
+  note             String?
+}
+
+model Booking {
+  id                    String @id @default(auto()) @map("_id") @db.ObjectId
+  email                 String @unique
+  journeyDate           String
+  refId                 String
+  driver                String
+  status                String
+  driverIncome          Int
+  total                 Int
+  payments              String
+  vehicle               String
+  vehicleType           String
+  totalNet              Int
+  discount              Int
+  passengerName         String
+  flightNumber          String
+  flightLandingTime     String
+  arrivingFrom          String
+  flightDepartureNumber String
+  serviceDuration       String
+  serviceType           String
+  flightDepartureTime   String
+  flightDepartureTo     String
+  phoneNumber           String
+  pickup                String
+  dropoff               String
+  via                   String
+  passengers            String
+  suitcases             String
+  carryOn               String
+  childSeats            String
+  boosterSeats          String
+  infantSeats           String
+  wheelchairs           String
+  waitingTime           String
+  meetGreet             String
+  source                String
+  customer              String
+  departments           String
+  leadName              String
+  leadEmail             String
+  leadPhoneNumber       String
+  createdAt             String
+  updatedAt             String
+  currency              String
+  trackingHistory       String
+}
