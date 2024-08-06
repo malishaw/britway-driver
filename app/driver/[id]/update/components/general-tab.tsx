@@ -366,7 +366,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
           />
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <Button variant="secondary" type="submit">
-              Edit Notification
+              Edit Notification1
             </Button>
           </div>
           <div className="grid grid-cols-2 gap-4">

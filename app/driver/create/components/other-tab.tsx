@@ -400,7 +400,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
               </FormItem>
             )}
           />
-          <div className="grid grid-cols-2 gap-4">
+          {/* <div className="grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="additionalFiles"
@@ -431,13 +431,14 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
                 </FormItem>
               )}
             />
-          </div>
+          </div> */}
 
-          <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+          {/* <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <Button variant="secondary" type="submit">
               + New File
             </Button>
-          </div>
+          </div> */}
+
           <div className="grid grid-cols-2 gap-4">
             <Button type="submit">Add</Button>
             <Button variant="outline" type="submit">
