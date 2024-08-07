@@ -13,8 +13,15 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Table,
   TableBody,
@@ -23,63 +30,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 import { Booking } from "../typings";
 
-// export const columns: ColumnDef<Booking>[] = [
-//   { accessorKey: "journeyDate" }, 
-//   { accessorKey: "refId" },
-//   { accessorKey: "driver" },
-//   { accessorKey: "status" },
-//   { accessorKey: "driverIncome" },
-//   { accessorKey: "total" },
-//   { accessorKey: "payments" },
-//   { accessorKey: "vehicle" },
-//   { accessorKey: "vehicleType" },
-//   { accessorKey: "total" },
-//   { accessorKey: "discount" },
-//   { accessorKey: "passengerName" },
-//   { accessorKey: "flightNumber" },
-//   { accessorKey: "flightLandingTime" },
-//   { accessorKey: "arrivingFrom" },
-//   { accessorKey: "flightDepartureNumber" },
-//   { accessorKey: "serviceDuration" },
-//   { accessorKey: "serviceType" },
-//   { accessorKey: "flightDepartureTime" },
-//   { accessorKey: "flightDepartureTo" },
-//   { accessorKey: "phoneNumber" },
-//   { accessorKey: "pickup" },
-//   { accessorKey: "dropoff" },
-//   { accessorKey: "via" },
-//   { accessorKey: "passengers" },
-//   { accessorKey: "suitcases" },
-//   { accessorKey: "carryOn" },
-//   { accessorKey: "childSeats" },
-//   { accessorKey: "boosterSeats" },
-//   { accessorKey: "infantSeats" },
-//   { accessorKey: "wheelchairs" },
-//   { accessorKey: "waitingTime" },
-//   { accessorKey: "email" },
-//   { accessorKey: "meetGreet" },
-//   { accessorKey: "source" },
-//   { accessorKey: "customer" },
-//   { accessorKey: "departments" },
-//   { accessorKey: "leadName" },
-//   { accessorKey: "leadEmail" },
-//   { accessorKey: "leadPhoneNumber" },
-//   { accessorKey: "createdAt" },
-//   { accessorKey: "updatedAt" },
-//   { accessorKey: "id" },
-//   { accessorKey: "currency" },
-//   {
-//     accessorKey: "Tracking History",
-//     cell: ({ getValue }) => (
-//       <span className="whitespace-nowrap">{`${getValue()}`}</span>
-//     ),
-//   },
-// ];
-
 export const columns: ColumnDef<Booking>[] = [
-  { accessorKey: "journeyDate", header: "Journey Date" },
+  {
+    accessorKey: "journeyDate",
+    header: "Journey Date",
+    filterFn: "includesString",
+  },
   { accessorKey: "refId", header: "Reference ID" },
   { accessorKey: "driver", header: "Driver" },
   { accessorKey: "status", header: "Status" },
@@ -136,6 +95,7 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const [date, setDate] = React.useState<Date>();
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
@@ -159,17 +119,45 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
     },
   });
 
+  React.useEffect(() => {
+    if (date) {
+      table
+        .getColumn("journeyDate")
+        ?.setFilterValue(format(date, "dd/MM/yyyy"));
+    } else {
+      table.getColumn("journeyDate")?.setFilterValue("");
+    }
+  }, [date]);
+
   return (
     <div className="overflow-auto">
       <div className="flex items-center pb-4 ">
-        <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("Email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("Email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant={"outline"}
+              className={cn(
+                "w-[280px] justify-start text-left font-normal",
+                !date && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {date ? format(date, "PPP") : <span>Pick a date</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
+
+        <Button className="ml-5" onClick={() => setDate(undefined)}>
+          Clear Filter
+        </Button>
       </div>
       <div className="rounded-md border">
         <Table>
