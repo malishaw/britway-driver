@@ -3,21 +3,20 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model DriverData {
-
-  id           String             @id @default(auto()) @map("_id") @db.ObjectId
+  id           String              @id @default(uuid())
   isDeleted    Boolean?
-
-  generalData  DriverGeneralData
+  generalData  DriverGeneralData?
   otherData    DriverOtherData?
   personalData DriverPersonalData?
 }
 
-type DriverGeneralData {
+model DriverGeneralData {
+  id            String @id @default(uuid())
   displayName   String
   uniqueId      String
   email         String
@@ -25,9 +24,12 @@ type DriverGeneralData {
   language      String
   timezone      String
   fleetOperator String
+  driverData   DriverData? @relation(fields: [driverDataId], references: [id])
+  driverDataId String?     @unique
 }
 
-type DriverOtherData {
+model DriverOtherData {
+  id                       String  @id @default(uuid())
   nationalInsuranceNumber  String?
   bankAccountDetails       String?
   insurance                String?
@@ -41,9 +43,13 @@ type DriverOtherData {
   driverActivityStatus     String?
   additionalFiles          String?
   file                     String?
+
+  driverData   DriverData? @relation(fields: [driverDataId], references: [id])
+  driverDataId String?     @unique
 }
 
-type DriverPersonalData {
+model DriverPersonalData {
+  id               String  @id @default(uuid())
   title            String?
   firstName        String?
   lastName         String?
@@ -60,10 +66,13 @@ type DriverPersonalData {
   companyNumber    String?
   companyVatNumber String?
   note             String?
+
+  driverData   DriverData? @relation(fields: [driverDataId], references: [id])
+  driverDataId String?     @unique
 }
 
 model Booking {
-  id                    String @id @default(auto()) @map("_id") @db.ObjectId
+  id                    String @id @default(uuid())
   email                 String @unique
   journeyDate           String
   refId                 String

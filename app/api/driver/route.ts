@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { createDriver, getDrivers, updateDriver } from "@/app/service";
+import { createDriver, getDrivers} from "@/app/service";
 import { IDriverData } from "@/app/typings/interfaces/driverData";
 
 export async function POST(req: NextRequest) {
@@ -8,6 +8,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const user = await createDriver(driverData);
+    console.log(driverData.generalData);
     return NextResponse.json(user, { status: 200 });
   } catch (error) {
     return NextResponse.json(

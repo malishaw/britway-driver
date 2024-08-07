@@ -4,7 +4,12 @@ import { IDriverData } from '../typings/interfaces/driverData';
 
 export const createDriver = (driverData: IDriverData) => {
   return prisma.driverData.create({
-    data: driverData,
+    data: {
+      isDeleted: false,
+      generalData: {
+        create: driverData.generalData
+      },
+    }
   });
 };
 
@@ -35,12 +40,12 @@ export const getDrivers = () => {
   });
 };
 
-export const updateDriver = (id: string, driverData: IDriverData) => {
-  return prisma.driverData.update({
-    where: { id },
-    data: driverData,
-  });
-};
+// export const updateDriver = (id: string, driverData: IDriverData) => {
+//   return prisma.driverData.update({
+//     where: { id },
+//     data: driverData,
+//   });
+// };
 
 export const deleteDriver = (id: string) => {
   return prisma.driverData.update({
