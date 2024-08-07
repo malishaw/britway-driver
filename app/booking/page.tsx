@@ -261,6 +261,75 @@ export default function Booking() {
     }
   };
 
+  // const createBookings = () => {
+  //   const newBookings = (data as Booking[]).map((x) => ({
+  //     email: x.Email,
+  //     journeyDate: x["Journey date"],
+  //     refId: x["Ref ID"],
+  //     driver: x.Driver,
+  //     status: x.Status,
+  //     driverIncome: x["Driver income"],
+  //     total: x.Total,
+  //     payments: x.Payments,
+  //     vehicle: x.Vehicle,
+  //     vehicleType: x["Vehicle type"],
+  //     totalNet: x["Total (net)"],
+  //     discount: x.Discount,
+  //     passengerName: x["Passenger name"],
+  //     flightNumber: x["Flight number"],
+  //     flightLandingTime: x["Flight landing time"],
+  //     arrivingFrom: x["Arriving from"],
+  //     flightDepartureNumber: x["Flight departure number"],
+  //     serviceDuration: x["Service duration"],
+  //     serviceType: x["Service type"],
+  //     flightDepartureTime: x["Flight departure time"],
+  //     flightDepartureTo: x["Flight departure to"],
+  //     phoneNumber: x["Phone number"],
+  //     pickup: x.Pickup,
+  //     dropoff: x.Dropoff,
+  //     via: x.Via,
+  //     passengers: x.Passengers,
+  //     suitcases: x.Suitcases,
+  //     carryOn: x["Carry-on"],
+  //     childSeats: x["Child seats"],
+  //     boosterSeats: x["Booster seats"],
+  //     infantSeats: x["Infant seats"],
+  //     wheelchairs: x.Wheelchairs,
+  //     waitingTime: x["Waiting time"],
+  //     meetGreet: x["Meet & Greet"],
+  //     source: x.Source,
+  //     customer: x.Customer,
+  //     departments: x.Departments,
+  //     leadName: x["Lead name"],
+  //     leadEmail: x["Lead email"],
+  //     leadPhoneNumber: x["Lead phone number"],
+  //     createdAt: x["Created at"],
+  //     updatedAt: x["Updated at"],
+  //     currency: x.Currency,
+  //     trackingHistory: x["Tracking History"],
+  //   }));
+
+  //   console.log("New bookings to create:", newBookings); // Log the new bookings data
+
+  //   axios.post("/api/booking", newBookings)
+  //     .then((response) => {
+  //       console.log("Post response:", response);
+  //       // Refetch bookings after successful post
+  //       axios.get("/api/booking")
+  //         .then((response) => {
+  //           console.log("Refetched bookings:", response.data); // Log the refetched data
+  //           setBookings(response.data);
+  //         })
+  //         .catch((error) => {
+  //           console.error("Error refetching bookings:", error);
+  //         });
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error creating bookings:", error);
+  //     });
+  // };
+
+
   const createBookings = () => {
     const newBookings = (data as Booking[]).map((x) => ({
       email: x.Email,
@@ -308,27 +377,20 @@ export default function Booking() {
       currency: x.Currency,
       trackingHistory: x["Tracking History"],
     }));
-
+  
     console.log("New bookings to create:", newBookings); // Log the new bookings data
-
+  
     axios.post("/api/booking", newBookings)
       .then((response) => {
         console.log("Post response:", response);
-        // Refetch bookings after successful post
-        axios.get("/api/booking")
-          .then((response) => {
-            console.log("Refetched bookings:", response.data); // Log the refetched data
-            setBookings(response.data);
-          })
-          .catch((error) => {
-            console.error("Error refetching bookings:", error);
-          });
+        // Handle success, e.g., update the local state or show a success message
       })
       .catch((error) => {
         console.error("Error creating bookings:", error);
       });
   };
 
+  
   return (
     <div className="flex flex-1 flex-col gap-4 w-screen lg:w-80">
       <div className="flex items-center justify-between">
