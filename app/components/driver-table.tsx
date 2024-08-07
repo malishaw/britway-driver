@@ -12,6 +12,8 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  FilterFn,
+  FilterFns
 } from "@tanstack/react-table";
 import { ArrowUpDown, PenIcon, TrashIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -103,6 +105,10 @@ export function DriversTable() {
     setSelectedDriver(row);
   }
 
+  const defaultFilterFns: Partial<Record<keyof FilterFns, FilterFn<any>>> = {
+    dateBetweenFilterFn: () => true, 
+  };
+
   const table = useReactTable({
     data,
     columns: [
@@ -113,8 +119,8 @@ export function DriversTable() {
         cell: ({ row }) => {
           return (
             <div className="flex gap-2">
-              <PenIcon onClick={()=>handleOnClickEdit(row.original)}/>
-              <TrashIcon onClick={()=>handleOnClickDelete(row.original)}/>
+              <PenIcon onClick={() => handleOnClickEdit(row.original)} />
+              <TrashIcon onClick={() => handleOnClickDelete(row.original)} />
             </div>
           );
         },
@@ -134,6 +140,7 @@ export function DriversTable() {
       columnVisibility,
       rowSelection,
     },
+    filterFns: defaultFilterFns as Record<keyof FilterFns, FilterFn<any>>,
   });
 
   React.useEffect(() => {
