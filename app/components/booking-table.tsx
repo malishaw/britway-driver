@@ -62,7 +62,9 @@ const dateBetweenFilterFn: FilterFn<any> = (row, columnId, value) => {
 };
 
 export function BookingTable({ data = [] }: { data: Booking[] }) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: 'journeyDate', desc: true }
+  ]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
