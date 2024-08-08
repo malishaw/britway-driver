@@ -119,7 +119,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
       axios.put(`/api/driver/${data.id}`, requestData).then(
         (response) => {
           console.log("Updated successful>>>>");
-          onCreate(response.data);
+          onCreate({...response.data, ...requestData});
         },
         (error) => {
           console.log(error);
@@ -129,7 +129,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
       axios.post("/api/driver", requestData).then(
         (response) => {
           console.log("Create successful>>>>");
-          onCreate(response.data);
+          onCreate({...response.data, ...requestData});
           Swal.fire({
             icon: "success",
             title: "Created successfully",

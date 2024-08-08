@@ -74,7 +74,6 @@ export const columns: ColumnDef<Driver>[] = [
   {
     accessorKey: "phone",
     header: "Phone",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "id",
@@ -151,8 +150,7 @@ export function DriversTable() {
     try {
       axios.get("/api/driver").then((response) => {
         const preparedData = response.data.map((driver: IDriverData) => ({
-          ...driver,
-          id: driver.id,
+          id: driver.generalData.uniqueId,
           name: driver.generalData.displayName,
           email: driver.generalData.email,
           phone: driver.personalData?.mobileNumber,

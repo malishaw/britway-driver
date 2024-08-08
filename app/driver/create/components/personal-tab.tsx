@@ -86,10 +86,6 @@ const formSchema = z.object({
   // }),
 });
 
-
-
-
-
 type FormType = z.infer<typeof formSchema>;
 
 export interface PersonalTabProps {
@@ -124,14 +120,14 @@ const GeneralTab: FC<PersonalTabProps> = ({ onCreate, data }) => {
     if (data?.generalData) {
       const requestData: IDriverData = {
         generalData: {
-          ...data?.generalData
+          ...data?.generalData,
         },
         personalData: values,
         otherData: data?.otherData,
       };
       axios.put(`/api/driver/${data.id}`, requestData).then(
         (response) => {
-          onCreate(response.data);
+          onCreate({ ...response.data, requestData });
         },
         (error) => {
           console.log(error);
