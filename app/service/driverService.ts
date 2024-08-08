@@ -20,6 +20,12 @@ export const createDriver = (driverData: IDriverData) => {
 export const getDriver = (id: string) => {
   return prisma.driverData.findUnique({
     where: { id },
+    select: {
+      id: true,
+      generalData: true,
+      personalData: true,
+      otherData: true
+    }
   });
 };
 

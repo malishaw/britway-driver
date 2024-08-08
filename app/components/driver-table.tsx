@@ -30,11 +30,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import axios from "axios";
 import { IDriverData } from "../typings/interfaces/driverData";
 import ConfirmationDialog from "./shared/confirmation-dialog/ConfirmationDialog";
-import { useRouter } from "next/router";
 import { useCustomNavigation } from "../hooks";
 
 export type Driver = {
   id: string;
+  uniqueId: string;
   photo: string;
   name: string;
   email: string;
@@ -76,9 +76,8 @@ export const columns: ColumnDef<Driver>[] = [
     header: "Phone",
   },
   {
-    accessorKey: "id",
+    accessorKey: "uniqueId",
     header: "Unique ID",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("id")}</div>,
   },
 ];
 
@@ -150,7 +149,8 @@ export function DriversTable() {
     try {
       axios.get("/api/driver").then((response) => {
         const preparedData = response.data.map((driver: IDriverData) => ({
-          id: driver.generalData.uniqueId,
+          id: driver.id,
+          uniqueId: driver.generalData.uniqueId,
           name: driver.generalData.displayName,
           email: driver.generalData.email,
           phone: driver.personalData?.mobileNumber,

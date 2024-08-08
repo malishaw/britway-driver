@@ -133,7 +133,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
           Swal.fire({
             icon: "success",
             title: "Created successfully",
-            text: "The driver data has been created.",
+            text: "The driver's general data has been created.",
           });
         },
         (error) => {
