@@ -1,6 +1,6 @@
 export interface IDriverGeneralData {
   displayName: string;
-  photo:string;
+  // photo:string;
   uniqueId: string;
   email: string;
   password: string;
