@@ -51,9 +51,9 @@ const formSchema = z.object({
   // .min(8, {
   //   message: "Confirm password must be at least 8 characters.",
   // }),
-  photo: z.string().url({
-      message: "Photo must be a valid URL.",
-  }),
+  // photo: z.string().url({
+  //     message: "Photo must be a valid URL.",
+  // }),
   language: z.string(),
   // .min(2, {
   //   message: "Language must be at least 2 characters.",
@@ -84,7 +84,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
       email: "",
       password: "",
       confirmPassword: "",
-      photo: "",
+      // photo: "",
       // status: "Approved",
       language: "English",
       timezone: "UTC+01:00 London",
@@ -102,7 +102,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
     const requestData: IDriverData = {
       generalData: {
         displayName: values.displayName,
-        photo:values.photo,
+        // photo:values.photo,
         uniqueId: values.uniqueId,
         email: values.email,
         password: values.password,
@@ -196,7 +196,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
             )}
           />
 
-          <FormField
+          {/* <FormField
             name="photo"
             control={form.control}
             render={({ field }) => (
@@ -225,7 +225,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           {/* <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
