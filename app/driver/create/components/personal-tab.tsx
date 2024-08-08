@@ -4,6 +4,7 @@ import React, { FC, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import Swal from "sweetalert2";
 
 import {
   Form,
@@ -86,10 +87,6 @@ const formSchema = z.object({
   // }),
 });
 
-
-
-
-
 type FormType = z.infer<typeof formSchema>;
 
 export interface PersonalTabProps {
@@ -124,17 +121,27 @@ const GeneralTab: FC<PersonalTabProps> = ({ onCreate, data }) => {
     if (data?.generalData) {
       const requestData: IDriverData = {
         generalData: {
-          ...data?.generalData
+          ...data?.generalData,
         },
         personalData: values,
         otherData: data?.otherData,
       };
       axios.put(`/api/driver/${data.id}`, requestData).then(
         (response) => {
-          onCreate(response.data);
+          onCreate({ ...response.data, requestData });
+          Swal.fire({
+            icon: "success",
+            title: "Created successfully",
+            text: "The driver's personal data has been created.",
+          });
         },
         (error) => {
           console.log(error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "An error occurred while creating the driver data.",
+          });
         }
       );
       return;
