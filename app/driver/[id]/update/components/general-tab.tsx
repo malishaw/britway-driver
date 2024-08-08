@@ -52,7 +52,8 @@ const formSchema = z.object({
   // .min(8, {
   //   message: "Confirm password must be at least 8 characters.",
   // }),
-  // photo: z.string().url({
+  photo: z.string(),
+  // .url({
   //     message: "Photo must be a valid URL.",
   // }),
   language: z.string(),
@@ -85,7 +86,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
       email: "",
       password: "",
       confirmPassword: "",
-      // photo: "",
+      photo: "",
       // status: "Approved",
       language: "English",
       timezone: "UTC+01:00 London",
@@ -103,6 +104,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
     const requestData: IDriverData = {
       generalData: {
         displayName: values.displayName,
+        photo:values.photo,
         uniqueId: values.uniqueId,
         email: values.email,
         password: values.password,

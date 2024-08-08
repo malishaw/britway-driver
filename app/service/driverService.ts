@@ -40,12 +40,19 @@ export const getDrivers = () => {
   });
 };
 
-// export const updateDriver = (id: string, driverData: IDriverData) => {
-//   return prisma.driverData.update({
-//     where: { id },
-//     data: driverData,
-//   });
-// };
+export const updateDriver = (id: string, driverData: IDriverData) => {
+  return prisma.driverData.update({
+    where: { id },
+    data: {
+      generalData:{
+        update:driverData.generalData,
+      }
+      // personalData:driverData.personalData
+
+
+    },
+  });
+};
 
 export const deleteDriver = (id: string) => {
   return prisma.driverData.update({

@@ -4,10 +4,7 @@ import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import Swal from 'sweetalert2';
-
-
-
+import Swal from "sweetalert2";
 
 import axios from "axios";
 
@@ -32,20 +29,16 @@ import {
 import { IDriverGeneralData } from "@/app/typings";
 import { IDriverData } from "@/app/typings/interfaces/driverData";
 import { error } from "console";
-
+import { UploadDropzone } from "@/lib/uploadthing";
 
 const formSchema = z.object({
-  displayName: z.string()
-  .min(2, {
+  displayName: z.string().min(2, {
     message: "Display name must be at least 2 characters.",
   }),
-  uniqueId: z.string()
-  .
-  min(1, {
+  uniqueId: z.string().min(1, {
     message: "Unique ID is required.",
   }),
-  email: z.string()
-  .email({
+  email: z.string().email({
     message: "Invalid email address.",
   }),
 
@@ -58,9 +51,9 @@ const formSchema = z.object({
   // .min(8, {
   //   message: "Confirm password must be at least 8 characters.",
   // }),
-  // photo: z.string().url({
-  //     message: "Photo must be a valid URL.",
-  // }),
+  photo: z.string().url({
+      message: "Photo must be a valid URL.",
+  }),
   language: z.string(),
   // .min(2, {
   //   message: "Language must be at least 2 characters.",
@@ -83,7 +76,6 @@ export interface IGeneralTabProps {
 }
 
 const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
- 
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -92,7 +84,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
       email: "",
       password: "",
       confirmPassword: "",
-      // photo: "",
+      photo: "",
       // status: "Approved",
       language: "English",
       timezone: "UTC+01:00 London",
@@ -110,6 +102,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
     const requestData: IDriverData = {
       generalData: {
         displayName: values.displayName,
+        photo:values.photo,
         uniqueId: values.uniqueId,
         email: values.email,
         password: values.password,
@@ -125,32 +118,29 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
     if (data?.id) {
       axios.put(`/api/driver/${data.id}`, requestData).then(
         (response) => {
-          console.log('Updated successful>>>>');
+          console.log("Updated successful>>>>");
           onCreate(response.data);
-         
         },
         (error) => {
-       
           console.log(error);
         }
       );
     } else {
       axios.post("/api/driver", requestData).then(
         (response) => {
-          console.log('Create successful>>>>');
+          console.log("Create successful>>>>");
           onCreate(response.data);
           Swal.fire({
-            icon: 'success',
-            title: 'Created successfully',
-            text: 'The driver data has been created.',
+            icon: "success",
+            title: "Created successfully",
+            text: "The driver data has been created.",
           });
-       
         },
         (error) => {
           Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An error occurred while creating the driver data.',
+            icon: "error",
+            title: "Error",
+            text: "An error occurred while creating the driver data.",
           });
           console.log(error);
         }
@@ -200,6 +190,37 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input placeholder="Email" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            name="photo"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Photo</FormLabel>
+                <FormControl>
+                  <div
+                    className="bg-no-repeat object-cover bg-cover"
+                    style={
+                      field.value
+                        ? { backgroundImage: `url(${field.value})` }
+                        : undefined
+                    }
+                  >
+                    <UploadDropzone
+                      endpoint="imageUploader"
+                      onClientUploadComplete={(res) => {
+                        field.onChange(res[0].url);
+                      }}
+                      onUploadError={(error: Error) => {
+                        alert(`ERROR! ${error.message}`);
+                      }}
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

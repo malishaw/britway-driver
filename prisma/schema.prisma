@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://britway_owner:6Vra3cqoDeyA@ep-winter-shape-a16vhlvn.ap-southeast-1.aws.neon.tech/britway?sslmode=require"
+ url      = env("DATABASE_URL")
 }
 
 model DriverData {
@@ -26,6 +26,7 @@ model DriverGeneralData {
   fleetOperator String
   driverData   DriverData? @relation(fields: [driverDataId], references: [id])
   driverDataId String?     @unique
+  photo        String?
 }
 
 model DriverOtherData {
