@@ -102,6 +102,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
     const requestData: IDriverData = {
       generalData: {
         displayName: values.displayName,
+        photo:values.photo,
         uniqueId: values.uniqueId,
         email: values.email,
         password: values.password,
