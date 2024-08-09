@@ -198,7 +198,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
             )}
           />
 
-          <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+          {/* <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
               name="password"
               control={form.control}
@@ -229,7 +229,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
                 </FormItem>
               )}
             />
-          </div>
+          </div> */}
 
           {/* <FormField
             name="photo"
@@ -366,11 +366,11 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
               </FormItem>
             )}
           />
-          <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+          {/* <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <Button variant="secondary" type="submit">
               Edit Notification
             </Button>
-          </div>
+          </div> */}
           <div className="grid grid-cols-2 gap-4">
             <Button type="submit">Add</Button>
             <Button variant="outline" type="submit">
