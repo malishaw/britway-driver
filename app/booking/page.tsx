@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import axios from "axios";
+import Swal from 'sweetalert2';
 
 import { Button } from "@/components/ui/button";
 import { useExcelData } from "../hooks";
@@ -94,6 +95,11 @@ export default function Booking() {
       .then((response) => {
         console.log("Post response:", response);
         console.log("response.data structure:", response.data);
+        Swal.fire({
+          icon: "success",
+          title: "Successfully",
+          text: "The booking's data has been imported.",
+        });
 
         // Assuming response.data is a count of created bookings
         // Re-fetch the bookings to get the updated list
