@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useRef, useEffect, useState } from "react";
@@ -9,14 +8,15 @@ import { BookingTable } from "../components/booking-table";
 import { type Booking } from "../typings";
 
 export default function Booking() {
-
   const fileInput = useRef<HTMLInputElement>(null);
   const { data, excelToData } = useExcelData();
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [isSaveDisabled, setIsSaveDisabled] = useState(false); // State for disabling the save button
 
   useEffect(() => {
     // Fetch bookings from the backend when the component mounts
-    axios.get("/api/booking")
+    axios
+      .get("/api/booking")
       .then((response) => {
         console.log("Fetched bookings:", response.data); // Log the fetched data
         setBookings(response.data);
@@ -37,9 +37,6 @@ export default function Booking() {
       console.error("Error processing the file:", error);
     }
   };
-
-
-
 
   const createBookings = () => {
     const newBookings = (data as Booking[]).map((x) => ({
@@ -88,29 +85,46 @@ export default function Booking() {
       currency: x.Currency,
       trackingHistory: x["Tracking History"],
     }));
-  
-    console.log("New bookings to create:", newBookings); // Log the new bookings data
-  
-    axios.post("/api/booking", newBookings)
+
+    console.log("New bookings to create:", newBookings);
+
+    axios
+      .post("/api/booking", newBookings)
       .then((response) => {
         console.log("Post response:", response);
-        // Handle success, e.g., update the local state or show a success message
+        console.log("response.data structure:", response.data);
+
+        // Assuming response.data is a count of created bookings
+        // Re-fetch the bookings to get the updated list
+        axios
+          .get("/api/booking")
+          .then((response) => {
+            console.log("Re-fetched bookings:", response.data);
+            setBookings(response.data); // Update state with the re-fetched bookings
+            setIsSaveDisabled(true);
+          })
+          .catch((error) => {
+            console.error("Error fetching bookings:", error);
+          });
       })
       .catch((error) => {
         console.error("Error creating bookings:", error);
       });
   };
 
-  
   return (
     <div className="flex flex-1 flex-col gap-4 w-screen lg:w-80">
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold md:text-2xl">Booking</h1>
 
         <div className="flex gap-5">
-          <Button disabled={data?.length === 0} onClick={createBookings}>
+          <Button
+            disabled={isSaveDisabled || data?.length === 0}
+            onClick={createBookings}
+          >
             Save
           </Button>
+
           <Button onClick={() => fileInput.current?.click()}>Import</Button>
           <input
             ref={fileInput}
@@ -130,5 +144,3 @@ export default function Booking() {
     </div>
   );
 }
-
-

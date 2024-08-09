@@ -74,7 +74,7 @@ model DriverPersonalData {
 
 model Booking {
   id                    String @id @default(uuid())
-  email                 String @unique
+  email                 String 
   journeyDate           String
   refId                 String
   driver                String
