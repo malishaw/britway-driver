@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { IDriverData } from "@/app/typings/interfaces/driverData";
 import axios from "axios";
+import { CheckIcon } from '@heroicons/react/24/outline';
 
 const formSchema = z.object({
   nationalInsuranceNumber: z.string(),
@@ -475,27 +476,41 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Driver Licence Address Status</FormLabel>
-
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a correct status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="Verified">Available</SelectItem>
-                    <SelectItem value="Not Verified">Not Verified</SelectItem>
-                  </SelectContent>
-                </Select>
-
+                <div style={{ position: "relative" }}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value} // Ensure the Select component takes full width
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a correct status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Verified">Verified</SelectItem>
+                      <SelectItem value="Not Verified">Not Verified</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {field.value === "Verified" && (
+                    <CheckIcon
+                      style={{
+                        position: "relative", // Changed from "relative" to "absolute"
+                        top: "-4.2rem", // Adjust this value as needed
+                        float: "inline-end",
+                        color: "green",
+                        width: "1.5rem",
+                        height: "1.5rem",
+                      }}
+                    />
+                  )}
+                </div>
                 <FormControl></FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
+
 
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
           <FormField

@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { IDriverData } from "@/app/typings/interfaces/driverData";
 import axios from "axios";
+import { CheckIcon } from '@heroicons/react/24/outline';
 
 const formSchema = z.object({
   nationalInsuranceNumber: z.string(),
@@ -80,6 +81,18 @@ const formSchema = z.object({
   //    {
   //   message: "Driver activity status must be either 'active' or 'inactive'.",
   // }),
+  driverAddressStatus: z.enum(["Verified", "Not Verified"]),
+  //    {
+  //   message: "Driver activity status must be either 'active' or 'inactive'.",
+  // }),
+  bgsStatus: z.enum(["Checked", "Unchecked"]),
+  //    {
+  //   message: "Driver activity status must be either 'active' or 'inactive'.",
+  // }),
+  lastCheckedDate: z.string(),
+  // .min(5, {
+  //   message: "PHV licence number must be at least 5 characters.",
+  // }),
   additionalFiles: z.string(),
   // .min(2, {
   //   message: "Title details must be at least 2 characters.",
@@ -113,6 +126,9 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       PHVLicence: "",
       PHVLicenceExpiryDate: "",
       driverActivityStatus: "Unavailable",
+      driverAddressStatus: "Not Verified",
+      bgsStatus: "Unchecked",
+      lastCheckedDate: "",
       additionalFiles: "",
       // file: "",
     },
@@ -415,6 +431,94 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
               </FormItem>
             )}
           />
+          <FormField
+            name="driverAddressStatus"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Driver Licence Address Status</FormLabel>
+                <div style={{ position: "relative" }}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value} // Ensure the Select component takes full width
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a correct status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Verified">Verified</SelectItem>
+                      <SelectItem value="Not Verified">Not Verified</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {field.value === "Verified" && (
+                    <CheckIcon
+                      style={{
+                        position: "relative", // Changed from "relative" to "absolute"
+                        top: "-4.2rem", // Adjust this value as needed
+                        float: "inline-end",
+                        color: "green",
+                        width: "1.5rem",
+                        height: "1.5rem",
+                      }}
+                    />
+                  )}
+                </div>
+                <FormControl></FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+
+
+          <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+          <FormField
+            name="bgsStatus"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>BGS Check Status</FormLabel>
+
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a correct status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Checked">Checked</SelectItem>
+                    <SelectItem value="Unchecked">Unchecked</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <FormControl></FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+            <FormField
+              name="lastCheckedDate"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Last Checked Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      placeholder="Last Checked Date"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
