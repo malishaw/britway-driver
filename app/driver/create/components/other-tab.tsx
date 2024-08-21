@@ -59,6 +59,14 @@ const formSchema = z.object({
   // .regex(/^\d{4}-\d{2}-\d{2}$/, {
   //   message: "PCO licence expiry date must be in the format YYYY-MM-DD.",
   // }),
+  MOTLicence: z.string(),
+  // .min(5, {
+  //   message: "PCO licence number must be at least 5 characters.",
+  // }),
+  MOTLicenceExpiryDate: z.string(),
+  // .regex(/^\d{4}-\d{2}-\d{2}$/, {
+  //   message: "PCO licence expiry date must be in the format YYYY-MM-DD.",
+  // }),
   PHVLicence: z.string(),
   // .min(5, {
   //   message: "PHV licence number must be at least 5 characters.",
@@ -98,6 +106,8 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       drivingLicenceExpiryDate: "",
       PCOLicence: "",
       PCOLicenceExpiryDate: "",
+      MOTLicence: "",
+      MOTLicenceExpiryDate: "",
       PHVLicence: "",
       PHVLicenceExpiryDate: "",
       driverActivityStatus: "Unavailable",
@@ -331,6 +341,39 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
                     <Input
                       type="date"
                       placeholder="PCO Licence Expiry Date"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+            <FormField
+              control={form.control}
+              name="MOTLicence"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>MOT</FormLabel>
+                  <FormControl>
+                    <Input placeholder="MOT " {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="MOTLicenceExpiryDate"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>MOT Expiry Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      placeholder="MOT Expiry Date"
                       {...field}
                     />
                   </FormControl>

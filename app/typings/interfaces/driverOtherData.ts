@@ -7,6 +7,8 @@ export interface IDriverOtherData {
     drivingLicenceExpiryDate: string
     PCOLicence: string
     PCOLicenceExpiryDate: string
+    MOTLicenceExpiryDate: string
+    MOTLicence: string
     PHVLicence: string
     PHVLicenceExpiryDate: string
     driverActivityStatus?: "Available" | "Unavailable";

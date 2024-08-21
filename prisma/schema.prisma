@@ -39,6 +39,8 @@ model DriverOtherData {
   drivingLicenceExpiryDate String?
   PCOLicence               String?
   PCOLicenceExpiryDate     String?
+  MOTLicence               String? 
+  MOTLicenceExpiryDate     String?
   PHVLicence               String?
   PHVLicenceExpiryDate     String?
   driverActivityStatus     String?
