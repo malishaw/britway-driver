@@ -44,6 +44,9 @@ model DriverOtherData {
   PHVLicence               String?
   PHVLicenceExpiryDate     String?
   driverActivityStatus     String?
+  driverAddressStatus      String?
+  bgsStatus                String?
+  lastCheckedDate          String?
   additionalFiles          String?
   file                     String?
 

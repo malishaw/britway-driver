@@ -84,7 +84,8 @@ const formSchema = z.object({
   // .min(2, {
   //   message: "Title details must be at least 2 characters.",
   // }),
-  // file: z.string().min(2, {
+  file: z.string(),
+  // .min(2, {
   //   message: "file details must be at least 2 characters.",
   // }),
 
@@ -126,11 +127,11 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
         personalData: {
           ...data?.personalData,
         },
-        // otherData: values,
+        otherData: values,
       };
       axios.put(`/api/driver/${data.id}`, requestData).then(
         (response) => {
-          onCreate(response.data);
+          onCreate({...response.data, ...requestData});
           toast("Updated successfully")
         },
         (error) => {
