@@ -28,6 +28,9 @@ import { IDriverData } from "@/app/typings/interfaces/driverData";
 import axios from "axios";
 import { CheckIcon } from '@heroicons/react/24/outline';
 
+import { UploadButton } from "@uploadthing/react";
+import { OurFileRouter } from "@/app/api/uploadthing/core"; 
+
 const formSchema = z.object({
   nationalInsuranceNumber: z.string(),
   // .min(5, {
@@ -596,7 +599,29 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
               + New File
             </Button>
           </div> */}
-
+        <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+          <FormField
+            name="file"
+            control={form.control}
+            render={() => (
+              <FormItem>
+                <FormLabel>Upload File</FormLabel>
+                <UploadButton<OurFileRouter, "imageUploader">
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    if (res && res.length > 0) {
+                      form.setValue("file", res[0].url);
+                    }
+                  }}
+                  onUploadError={(error) => {
+                    console.error("Upload failed:", error);
+                  }}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
           <div className="grid grid-cols-2 gap-4">
             <Button type="submit">Add</Button>
             <Button variant="outline" type="submit">
