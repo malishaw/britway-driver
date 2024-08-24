@@ -7,9 +7,14 @@ export interface IDriverOtherData {
     drivingLicenceExpiryDate: string
     PCOLicence: string
     PCOLicenceExpiryDate: string
+    MOTLicenceExpiryDate: string
+    MOTLicence: string
     PHVLicence: string
     PHVLicenceExpiryDate: string
     driverActivityStatus?: "Available" | "Unavailable";
+    driveAddressStatus?: "Verified" | "Not Verified";
+    bgsStatus?: "Checked" | "Unchecked";
+    lastCheckedDate: string
     additionalFiles: string
     file: string
   }

@@ -4,6 +4,7 @@ import React, { FC, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import Swal from "sweetalert2";
 
 import {
   Form,
@@ -25,6 +26,10 @@ import {
 } from "@/components/ui/select";
 import { IDriverData } from "@/app/typings/interfaces/driverData";
 import axios from "axios";
+import { CheckIcon } from '@heroicons/react/24/outline';
+
+import { UploadButton } from "@uploadthing/react";
+import { OurFileRouter } from "@/app/api/uploadthing/core"; 
 
 const formSchema = z.object({
   nationalInsuranceNumber: z.string(),
@@ -59,6 +64,14 @@ const formSchema = z.object({
   // .regex(/^\d{4}-\d{2}-\d{2}$/, {
   //   message: "PCO licence expiry date must be in the format YYYY-MM-DD.",
   // }),
+  MOTLicence: z.string(),
+  // .min(5, {
+  //   message: "PCO licence number must be at least 5 characters.",
+  // }),
+  MOTLicenceExpiryDate: z.string(),
+  // .regex(/^\d{4}-\d{2}-\d{2}$/, {
+  //   message: "PCO licence expiry date must be in the format YYYY-MM-DD.",
+  // }),
   PHVLicence: z.string(),
   // .min(5, {
   //   message: "PHV licence number must be at least 5 characters.",
@@ -70,6 +83,18 @@ const formSchema = z.object({
   driverActivityStatus: z.enum(["Available", "Unavailable"]),
   //    {
   //   message: "Driver activity status must be either 'active' or 'inactive'.",
+  // }),
+  driverAddressStatus: z.enum(["Verified", "Not Verified"]),
+  //    {
+  //   message: "Driver activity status must be either 'active' or 'inactive'.",
+  // }),
+  bgsStatus: z.enum(["Checked", "Unchecked"]),
+  //    {
+  //   message: "Driver activity status must be either 'active' or 'inactive'.",
+  // }),
+  lastCheckedDate: z.string(),
+  // .min(5, {
+  //   message: "PHV licence number must be at least 5 characters.",
   // }),
   additionalFiles: z.string(),
   // .min(2, {
@@ -98,9 +123,14 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       drivingLicenceExpiryDate: "",
       PCOLicence: "",
       PCOLicenceExpiryDate: "",
+      MOTLicence: "",
+      MOTLicenceExpiryDate: "",
       PHVLicence: "",
       PHVLicenceExpiryDate: "",
       driverActivityStatus: "Unavailable",
+      driverAddressStatus: "Not Verified",
+      bgsStatus: "Unchecked",
+      lastCheckedDate: "",
       additionalFiles: "",
       file: "",
     },
@@ -119,10 +149,19 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       };
       axios.put(`/api/driver/${data.id}`, requestData).then(
         (response) => {
-          onCreate(response.data);
+          onCreate({...response.data, ...requestData});
+          Swal.fire({
+            icon: "success",
+            title: "Created successfully",
+            text: "The driver's other data has been created.",
+          });
         },
         (error) => {
-          console.log(error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "An error occurred while creating the driver data.",
+          });
         }
       );
       return;
@@ -342,6 +381,39 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
               control={form.control}
+              name="MOTLicence"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>MOT</FormLabel>
+                  <FormControl>
+                    <Input placeholder="MOT " {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="MOTLicenceExpiryDate"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>MOT Expiry Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      placeholder="MOT Expiry Date"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+            <FormField
+              control={form.control}
               name="PHVLicence"
               render={({ field }) => (
                 <FormItem>
@@ -400,6 +472,95 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
               </FormItem>
             )}
           />
+
+          <FormField
+            name="driverAddressStatus"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Driver Licence Address Status</FormLabel>
+                <div style={{ position: "relative" }}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value} // Ensure the Select component takes full width
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a correct status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Verified">Verified</SelectItem>
+                      <SelectItem value="Not Verified">Not Verified</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {field.value === "Verified" && (
+                    <CheckIcon
+                      style={{
+                        position: "relative", // Changed from "relative" to "absolute"
+                        top: "-4.2rem", // Adjust this value as needed
+                        float: "inline-end",
+                        color: "green",
+                        width: "1.5rem",
+                        height: "1.5rem",
+                      }}
+                    />
+                  )}
+                </div>
+                <FormControl></FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+
+
+          <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+          <FormField
+            name="bgsStatus"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>BGS Check Status</FormLabel>
+
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a correct status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Checked">Checked</SelectItem>
+                    <SelectItem value="Unchecked">Unchecked</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <FormControl></FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+            <FormField
+              name="lastCheckedDate"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Last Checked Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      placeholder="Last Checked Date"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           {/* <div className="grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
@@ -438,7 +599,29 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
               + New File
             </Button>
           </div> */}
-
+        <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+          <FormField
+            name="file"
+            control={form.control}
+            render={() => (
+              <FormItem>
+                <FormLabel>Upload File</FormLabel>
+                <UploadButton<OurFileRouter, "imageUploader">
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    if (res && res.length > 0) {
+                      form.setValue("file", res[0].url);
+                    }
+                  }}
+                  onUploadError={(error) => {
+                    console.error("Upload failed:", error);
+                  }}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
           <div className="grid grid-cols-2 gap-4">
             <Button type="submit">Add</Button>
             <Button variant="outline" type="submit">

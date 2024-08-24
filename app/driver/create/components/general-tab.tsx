@@ -306,7 +306,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
             )}
           /> */}
 
-          <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+          {/* <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
               name="language"
               control={form.control}
@@ -369,7 +369,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
                 </FormItem>
               )}
             />
-          </div>
+          </div> */}
 
           <FormField
             name="fleetOperator"

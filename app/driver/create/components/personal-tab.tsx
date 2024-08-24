@@ -128,7 +128,7 @@ const GeneralTab: FC<PersonalTabProps> = ({ onCreate, data }) => {
       };
       axios.put(`/api/driver/${data.id}`, requestData).then(
         (response) => {
-          onCreate({ ...response.data, requestData });
+          onCreate({...response.data, ...requestData});
           Swal.fire({
             icon: "success",
             title: "Created successfully",
