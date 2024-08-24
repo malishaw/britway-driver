@@ -12,6 +12,11 @@ export const createDriver = (driverData: IDriverData) => {
         create: {
           city: 'test'
         }
+      },
+      otherData: {
+        create: {
+          insurance: "test"
+        }
       }
     },
   });
@@ -59,6 +64,9 @@ export const updateDriver = (id: string, driverData: IDriverData) => {
       },
       personalData: {
         update: driverData.personalData,
+      },
+      otherData: {
+        update: driverData.otherData
       },
     },
   });
