@@ -5,18 +5,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Swal from "sweetalert2";
-
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -26,10 +24,9 @@ import {
 } from "@/components/ui/select";
 import { IDriverData } from "@/app/typings/interfaces/driverData";
 import axios from "axios";
-import { CheckIcon } from '@heroicons/react/24/outline';
-
-import { UploadButton } from "@uploadthing/react";
-import { OurFileRouter } from "@/app/api/uploadthing/core"; 
+import { CheckIcon } from "@heroicons/react/24/outline";
+import FileUpload from "@/app/components/file-upload";
+import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
   nationalInsuranceNumber: z.string(),
@@ -41,6 +38,9 @@ const formSchema = z.object({
   //   message: "Bank account details must be at least 5 characters.",
   // }),
   insurance: z.string(),
+  insuranceFile: z.string().optional(),
+  insuranceVerifyStatus: z.string().optional(),
+  insuranceLastVerifyDate: z.string().optional(),
   // .min(2, {
   //   message: "Insurance details must be at least 2 characters.",
   // }),
@@ -49,6 +49,9 @@ const formSchema = z.object({
   //   message: "Insurance expiry date must be in the format YYYY-MM-DD.",
   // }),
   drivingLicence: z.string(),
+  drivingLicenseFile: z.string().optional(),
+  drivingLicenseVerifyStatus: z.string().optional(),
+  drivingLicenseLastVerifyDate: z.string().optional(),
   // .min(5, {
   //   message: "Driving licence number must be at least 5 characters.",
   // }),
@@ -57,6 +60,9 @@ const formSchema = z.object({
   //   message: "Driving licence expiry date must be in the format YYYY-MM-DD.",
   // }),
   PCOLicence: z.string(),
+  PCOLicenseFile: z.string().optional(),
+  PCOLicenseVerifyStatus: z.string().optional(),
+  PCOLicenseLastVerifyDate: z.string().optional(),
   // .min(5, {
   //   message: "PCO licence number must be at least 5 characters.",
   // }),
@@ -65,6 +71,9 @@ const formSchema = z.object({
   //   message: "PCO licence expiry date must be in the format YYYY-MM-DD.",
   // }),
   MOTLicence: z.string(),
+  MOTLicenseFile: z.string().optional(),
+  MOTLicenseVerifyStatus: z.string().optional(),
+  MOTLicenseLastVerifyDate: z.string().optional(),
   // .min(5, {
   //   message: "PCO licence number must be at least 5 characters.",
   // }),
@@ -73,6 +82,9 @@ const formSchema = z.object({
   //   message: "PCO licence expiry date must be in the format YYYY-MM-DD.",
   // }),
   PHVLicence: z.string(),
+  PHVLicenseFile: z.string().optional(),
+  PHVLicenseVerifyStatus: z.string().optional(),
+  PHVLicenseLastVerifyDate: z.string().optional(),
   // .min(5, {
   //   message: "PHV licence number must be at least 5 characters.",
   // }),
@@ -149,7 +161,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       };
       axios.put(`/api/driver/${data.id}`, requestData).then(
         (response) => {
-          onCreate({...response.data, ...requestData});
+          onCreate({ ...response.data, ...requestData });
           Swal.fire({
             icon: "success",
             title: "Created successfully",
@@ -168,79 +180,6 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
     }
   }
 
-    // const fileInputRef = React.useRef(null);
-
-    // const handleClick = () => {
-    //   fileInputRef.current.click();
-    // };
-
-    // const handleFileChange = (event) => {
-    //   const file = event.target.files[0];
-    //   if (file) {
-    //     console.log("Selected file:", file);
-    //   }
-    // };
-
-
-
-  // function onSubmit(values: FormType) {
-  //   if (data?.generalData) {
-  //     const requestData: IDriverData = {
-  //       generalData: {
-  //         ...data?.generalData,
-  //       },
-  //       personalData: {
-  //         ...data?.personalData,
-  //       },
-  //       otherData: values,
-  //     };
-  
-  //     axios.put(`/api/driver/${data.id}`, requestData).then(
-  //       (response) => {
-  //         window.alert("Data submitted successfully!");
-  //         onCreate(response.data);
-  //       },
-  //       (error) => {
-  //         window.alert("An error occurred while submitting the data.");
-  //         console.log(error);
-  //       }
-  //     );
-  //     return;
-  //   }
-  // }
-
-  // function onSubmit(values: FormType) {
-  //   console.log("onSubmit called with values:", values); // Debug log
-  //   if (data?.generalData) {
-  //     const requestData: IDriverData = {
-  //       generalData: {
-  //         ...data?.generalData,
-  //       },
-  //       personalData: {
-  //         ...data?.personalData,
-  //       },
-  //       otherData: values,
-  //     };
-  
-  //     console.log("Request Data:", requestData); // Debug log
-  
-  //     axios.put(`/api/driver/${data.id}`, requestData).then(
-  //       (response) => {
-  //         console.log("API call successful:", response); // Debug log
-  //         window.alert("Data submitted successfully!");
-  //         onCreate(response.data);
-  //       },
-  //       (error) => {
-  //         console.error("API call failed:", error); // Debug log
-  //         window.alert("An error occurred while submitting the data.");
-  //       }
-  //     );
-  //   } else {
-  //     console.warn("Data is missing or incomplete."); // Debug log
-  //   }
-  // }
-  
-  
   useEffect(() => {
     if (data?.otherData) {
       form.reset(data.otherData);
@@ -280,13 +219,30 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
             />
           </div>
 
+          <div className="border-t pt-2">
+            <Label className="text-lg">Insurance</Label>
+          </div>
+
+          <FormField
+            name="insuranceFile"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FileUpload
+                  uploadedFiles={field.value ? [field.value] : undefined}
+                  onUploadComplete={(files) => field.onChange(files[0])}
+                />
+              </FormItem>
+            )}
+          />
+
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
               control={form.control}
               name="insurance"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel> Insurance </FormLabel>
+                  <FormLabel>Number</FormLabel>
                   <FormControl>
                     <Input placeholder=" Insurance " {...field} />
                   </FormControl>
@@ -299,7 +255,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Insurance Expiry Date</FormLabel>
+                  <FormLabel>Expiry Date</FormLabel>
                   <FormControl>
                     <Input
                       type="date"
@@ -312,13 +268,75 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
               )}
             />
           </div>
+
+          <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+            <FormField
+              control={form.control}
+              name="insuranceVerifyStatus"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Verify Status</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Verified">Verified</SelectItem>
+                      <SelectItem value="Unverified">Unverified</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="insuranceLastVerifyDate"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Verify Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      placeholder="Last Verify Date"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="border-t pt-2">
+            <Label className="text-lg">Driving Licence</Label>
+          </div>
+
+          <FormField
+            name="drivingLicenseFile"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FileUpload
+                  uploadedFiles={field.value ? [field.value] : undefined}
+                  onUploadComplete={(files) => field.onChange(files[0])}
+                />
+              </FormItem>
+            )}
+          />
+
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
               control={form.control}
               name="drivingLicence"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Driving Licence</FormLabel>
+                  <FormLabel>Driving Licence Number</FormLabel>
                   <FormControl>
                     <Input placeholder="Driving Licence" {...field} />
                   </FormControl>
@@ -345,13 +363,75 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
               )}
             />
           </div>
+
+          <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+            <FormField
+              control={form.control}
+              name="drivingLicenseVerifyStatus"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Verify Status</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Verified">Verified</SelectItem>
+                      <SelectItem value="Unverified">Unverified</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="drivingLicenseLastVerifyDate"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Last Verify Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      placeholder="Last Verify Date"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="border-t pt-2">
+            <Label className="text-lg">PCO Licence</Label>
+          </div>
+
+          <FormField
+            name="PCOLicenseFile"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FileUpload
+                  uploadedFiles={field.value ? [field.value] : undefined}
+                  onUploadComplete={(files) => field.onChange(files[0])}
+                />
+              </FormItem>
+            )}
+          />
+
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
               control={form.control}
               name="PCOLicence"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>PCO Licence</FormLabel>
+                  <FormLabel>PCO Licence Number</FormLabel>
                   <FormControl>
                     <Input placeholder="PCO Licence " {...field} />
                   </FormControl>
@@ -378,13 +458,75 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
               )}
             />
           </div>
+
+          <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+            <FormField
+              control={form.control}
+              name="PCOLicenseVerifyStatus"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Verify Status</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Verified">Verified</SelectItem>
+                      <SelectItem value="Unverified">Unverified</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="PCOLicenseLastVerifyDate"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Last Verify Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      placeholder="Last Verify Date"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="border-t pt-2">
+            <Label className="text-lg">MOT</Label>
+          </div>
+
+          <FormField
+            name="MOTLicenseFile"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FileUpload
+                  uploadedFiles={field.value ? [field.value] : undefined}
+                  onUploadComplete={(files) => field.onChange(files[0])}
+                />
+              </FormItem>
+            )}
+          />
+
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
               control={form.control}
               name="MOTLicence"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>MOT</FormLabel>
+                  <FormLabel>MOT Number</FormLabel>
                   <FormControl>
                     <Input placeholder="MOT " {...field} />
                   </FormControl>
@@ -411,13 +553,75 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
               )}
             />
           </div>
+
+          <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+            <FormField
+              control={form.control}
+              name="MOTLicenseVerifyStatus"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Verify Status</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Verified">Verified</SelectItem>
+                      <SelectItem value="Unverified">Unverified</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="MOTLicenseLastVerifyDate"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Verify Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      placeholder="Last Verify Date"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="border-t pt-2">
+            <Label className="text-lg">PHV Licence</Label>
+          </div>
+
+          <FormField
+            name="PHVLicenseFile"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FileUpload
+                  uploadedFiles={field.value ? [field.value] : undefined}
+                  onUploadComplete={(files) => field.onChange(files[0])}
+                />
+              </FormItem>
+            )}
+          />
+
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
               control={form.control}
               name="PHVLicence"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>PHV Licence</FormLabel>
+                  <FormLabel>PHV Licence Number</FormLabel>
                   <FormControl>
                     <Input placeholder="PHV Licence" {...field} />
                   </FormControl>
@@ -444,7 +648,53 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
               )}
             />
           </div>
-    
+
+          <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+            <FormField
+              control={form.control}
+              name="PHVLicenseVerifyStatus"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Verify Status</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Verified">Verified</SelectItem>
+                      <SelectItem value="Unverified">Unverified</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="PHVLicenseLastVerifyDate"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Verify Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      placeholder="Last Verify Date"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="border-t pt-2" />
+
           <FormField
             name="driverActivityStatus"
             control={form.control}
@@ -513,36 +763,34 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
             )}
           />
 
-
-
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
-          <FormField
-            name="bgsStatus"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>BGS Check Status</FormLabel>
+            <FormField
+              name="bgsStatus"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>BGS Check Status</FormLabel>
 
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a correct status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="Checked">Checked</SelectItem>
-                    <SelectItem value="Unchecked">Unchecked</SelectItem>
-                  </SelectContent>
-                </Select>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a correct status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Checked">Checked</SelectItem>
+                      <SelectItem value="Unchecked">Unchecked</SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                <FormControl></FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormControl></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               name="lastCheckedDate"
               control={form.control}
@@ -561,67 +809,24 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
               )}
             />
           </div>
-          {/* <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="additionalFiles"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Additional Files</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Title" {...field} />
-                  </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="file"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      className="mt-[33px]"
-                      placeholder="File"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div> */}
+          <div>
+            <Label>Additional Files</Label>
+          </div>
 
-          {/* <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
-            <Button variant="secondary" type="submit">
-              + New File
-            </Button>
-          </div> */}
-        <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
           <FormField
             name="file"
             control={form.control}
-            render={() => (
+            render={({ field }) => (
               <FormItem>
-                <FormLabel>Upload File</FormLabel>
-                <UploadButton<OurFileRouter, "imageUploader">
-                  endpoint="imageUploader"
-                  onClientUploadComplete={(res) => {
-                    if (res && res.length > 0) {
-                      form.setValue("file", res[0].url);
-                    }
-                  }}
-                  onUploadError={(error) => {
-                    console.error("Upload failed:", error);
-                  }}
+                <FileUpload
+                  uploadedFiles={field.value ? [field.value] : undefined}
+                  onUploadComplete={(files) => field.onChange(files[0])}
                 />
-                <FormMessage />
               </FormItem>
             )}
           />
-        </div>
+
           <div className="grid grid-cols-2 gap-4">
             <Button type="submit">Add</Button>
             <Button variant="outline" type="submit">

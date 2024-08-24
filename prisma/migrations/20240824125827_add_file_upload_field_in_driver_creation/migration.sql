@@ -1,0 +1,16 @@
+-- AlterTable
+ALTER TABLE "DriverOtherData" ADD COLUMN     "MOTLicenseFile" TEXT,
+ADD COLUMN     "MOTLicenseLastVerifyDate" TEXT,
+ADD COLUMN     "MOTLicenseVerifyStatus" TEXT,
+ADD COLUMN     "PCOLicenseFile" TEXT,
+ADD COLUMN     "PCOLicenseLastVerifyDate" TEXT,
+ADD COLUMN     "PCOLicenseVerifyStatus" TEXT,
+ADD COLUMN     "PHVLicenseFile" TEXT,
+ADD COLUMN     "PHVLicenseLastVerifyDate" TEXT,
+ADD COLUMN     "PHVLicenseVerifyStatus" TEXT,
+ADD COLUMN     "drivingLicenseFile" TEXT,
+ADD COLUMN     "drivingLicenseLastVerifyDate" TEXT,
+ADD COLUMN     "drivingLicenseVerifyStatus" TEXT,
+ADD COLUMN     "insuranceFile" TEXT,
+ADD COLUMN     "insuranceLastVerifyDate" TEXT,
+ADD COLUMN     "insuranceVerifyStatus" TEXT;

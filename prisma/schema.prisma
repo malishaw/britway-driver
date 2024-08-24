@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
- url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model DriverData {
@@ -16,7 +16,7 @@ model DriverData {
 }
 
 model DriverGeneralData {
-  id            String @id @default(uuid())
+  id            String      @id @default(uuid())
   displayName   String
   uniqueId      String
   email         String
@@ -24,31 +24,46 @@ model DriverGeneralData {
   language      String
   timezone      String
   fleetOperator String
-  driverData   DriverData? @relation(fields: [driverDataId], references: [id])
-  driverDataId String?     @unique
-  photo        String?
+  driverData    DriverData? @relation(fields: [driverDataId], references: [id])
+  driverDataId  String?     @unique
+  photo         String?
 }
 
 model DriverOtherData {
-  id                       String  @id @default(uuid())
-  nationalInsuranceNumber  String?
-  bankAccountDetails       String?
-  insurance                String?
-  insuranceExpiryDate      String?
-  drivingLicence           String?
-  drivingLicenceExpiryDate String?
-  PCOLicence               String?
-  PCOLicenceExpiryDate     String?
-  MOTLicence               String? 
-  MOTLicenceExpiryDate     String?
-  PHVLicence               String?
-  PHVLicenceExpiryDate     String?
-  driverActivityStatus     String?
-  driverAddressStatus      String?
-  bgsStatus                String?
-  lastCheckedDate          String?
-  additionalFiles          String?
-  file                     String?
+  id                           String  @id @default(uuid())
+  nationalInsuranceNumber      String?
+  bankAccountDetails           String?
+  insurance                    String?
+  insuranceExpiryDate          String?
+  insuranceFile                String?
+  insuranceVerifyStatus        String?
+  insuranceLastVerifyDate      String?
+  drivingLicence               String?
+  drivingLicenceExpiryDate     String?
+  drivingLicenseFile           String?
+  drivingLicenseVerifyStatus   String?
+  drivingLicenseLastVerifyDate String?
+  PCOLicence                   String?
+  PCOLicenceExpiryDate         String?
+  PCOLicenseFile               String?
+  PCOLicenseVerifyStatus       String?
+  PCOLicenseLastVerifyDate     String?
+  MOTLicence                   String?
+  MOTLicenceExpiryDate         String?
+  MOTLicenseFile               String?
+  MOTLicenseVerifyStatus       String?
+  MOTLicenseLastVerifyDate     String?
+  PHVLicence                   String?
+  PHVLicenceExpiryDate         String?
+  PHVLicenseFile               String?
+  PHVLicenseVerifyStatus       String?
+  PHVLicenseLastVerifyDate     String?
+  driverActivityStatus         String?
+  driverAddressStatus          String?
+  bgsStatus                    String?
+  lastCheckedDate              String?
+  additionalFiles              String?
+  file                         String?
 
   driverData   DriverData? @relation(fields: [driverDataId], references: [id])
   driverDataId String?     @unique
@@ -79,7 +94,7 @@ model DriverPersonalData {
 
 model Booking {
   id                    String @id @default(uuid())
-  email                 String 
+  email                 String
   journeyDate           String
   refId                 String
   driver                String
