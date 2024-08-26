@@ -11,6 +11,10 @@ interface Props {
 }
 
 export default function FileUpload({ uploadedFiles, onUploadComplete }: Props) {
+  const handleFileClick = (fileUrl: string) => {
+    window.open(fileUrl, '_blank');
+  };
+
   return (
     <div>
       <UploadDropzone<OurFileRouter, "imageUploader">
@@ -22,7 +26,7 @@ export default function FileUpload({ uploadedFiles, onUploadComplete }: Props) {
 
       <ul className="mt-5 flex flex-col gap-2">
         {uploadedFiles?.map((file, i) => (
-          <li key={file} className="p-5 bg-slate-100 rounded-md">
+          <li key={file} className="p-5 bg-slate-100 rounded-md" onClick={() => handleFileClick(file)}>
             <div className="flex gap-5 items-center">
               <div className="row-span-2 w-24 h-24">
                 {file.startsWith("image") ? (

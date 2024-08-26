@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -179,6 +179,8 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
     },
   });
 
+  // const [selectedFile, setSelectedFile] = useState<string | null>(null);
+
   function onSubmit(values: FormType) {
     if (data?.generalData) {
       const requestData: IDriverData = {
@@ -221,6 +223,11 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       form.reset(data.otherData);
     }
   }, [data]);
+
+  // const handleFileClick = (fileUrl: string) => {
+  //   setSelectedFile(fileUrl);
+  //   window.open(fileUrl, '_blank');
+  // };
 
   return (
     <Form {...form}>
@@ -292,17 +299,17 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
 </div>
 
 <FormField
-  name="insuranceFile"
-  control={form.control}
-  render={({ field }) => (
-    <FormItem>
-      <FileUpload
-        uploadedFiles={field.value ? [field.value] : undefined}
-        onUploadComplete={(files) => field.onChange(files[0])}
-      />
-    </FormItem>
-  )}
-/>
+            name="insuranceFile"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+          <FileUpload
+            uploadedFiles={field.value ? [field.value] : undefined}
+            onUploadComplete={(files) => field.onChange(files[0])}
+          />
+        </FormItem>
+            )}
+          />
 
 <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
   <FormField
