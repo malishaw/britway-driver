@@ -35,8 +35,8 @@ export default function FileUpload({ uploadedFiles, onUploadComplete }: Props) {
           <li key={file} className="p-5 bg-slate-100 rounded-md ">
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <div className="flex gap-5 items-center cursor-pointer">
-                  <div className="row-span-2 w-24 h-24 ">
+                <div className="flex gap-0 items-center cursor-pointer">
+                  <div className="row-span-2 w-24 h-10">
                     {file.startsWith("image") ? (
                       <Image
                         src={file}
@@ -46,10 +46,10 @@ export default function FileUpload({ uploadedFiles, onUploadComplete }: Props) {
                         className="object-cover w-24 h-24 rounded "
                       />
                     ) : (
-                      <FileIcon className="w-24 h-24 text-slate-500" />
+                      <FileIcon className="w-8 h-8 text-slate-500 text-center items-center " />
                     )}
                   </div>
-                  <span className="text-lg font-semibold truncate text-slate-800 ">
+                  <span className="text-sm font-semibold truncate text-slate-800 ">
                     {file}
                   </span>
                 </div>

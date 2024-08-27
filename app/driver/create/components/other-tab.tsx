@@ -27,6 +27,7 @@ import axios from "axios";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import FileUpload from "@/app/components/file-upload";
 import { Label } from "@/components/ui/label";
+import { ProfilePictureUpload } from "./ProfilePictureUpload";
 
 const formSchema = z.object({
   nationalInsuranceNumber: z.string(),
@@ -116,6 +117,7 @@ const formSchema = z.object({
   // .min(2, {
   //   message: "file details must be at least 2 characters.",
   // }),
+  
 });
 type FormType = z.infer<typeof formSchema>;
 
@@ -145,6 +147,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       lastCheckedDate: "",
       additionalFiles: "",
       file: "",
+      
     },
   });
 
@@ -190,6 +193,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
     <Form {...form}>
       <div>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
               control={form.control}
@@ -218,6 +222,23 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
               )}
             />
           </div>
+
+          <div className="border-t pt-2">
+            <Label className="text-lg">Profile Picture </Label>
+          </div>
+          <ProfilePictureUpload control={form.control}/>
+          {/* <FormField
+            name="insuranceFile"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FileUpload
+                  uploadedFiles={field.value ? [field.value] : undefined}
+                  onUploadComplete={(files) => field.onChange(files[0])}
+                />
+              </FormItem>
+            )}
+          /> */}
 
           <div className="border-t pt-2">
             <Label className="text-lg">Insurance</Label>

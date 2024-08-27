@@ -29,6 +29,7 @@ import axios from "axios";
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { Label } from "@radix-ui/react-label";
 import FileUpload from "@/app/components/file-upload";
+import { ProfilePictureUpdate } from "@/app/driver/[id]/update/components/ProfilePictureUpdate";
 
 const formSchema = z.object({
   nationalInsuranceNumber: z.string(),
@@ -233,6 +234,8 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
     <Form {...form}>
       <div >
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* call for update the profile */}
+        <ProfilePictureUpdate control={form.control} currentPicture={undefined} userName={undefined}/>
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
               control={form.control}

@@ -31,6 +31,7 @@ import axios from "axios";
 import { IDriverData } from "../typings/interfaces/driverData";
 import ConfirmationDialog from "./shared/confirmation-dialog/ConfirmationDialog";
 import { useCustomNavigation } from "../hooks";
+import Image from "next/image";
 
 export type Driver = {
   id: string;
@@ -46,11 +47,16 @@ export const columns: ColumnDef<Driver>[] = [
     id: "photo",
     cell: ({ row }) => (
       <Avatar>
-        <AvatarImage src={row.original.photo} />
-        <AvatarFallback>CN</AvatarFallback>
+        <AvatarImage src={row.original.photo} alt="profilePicture" />
+        <AvatarFallback>
+          {row.original.photo ? (
+            <Image src={row.original.photo} alt="profilePicture" width={40} height={40} />
+          ) : (
+            row.original.name.substring(0, 2).toUpperCase()
+          )}
+        </AvatarFallback>
       </Avatar>
-    ),
-  },
+    ),  },
   {
     accessorKey: "name",
     header: "Name",
