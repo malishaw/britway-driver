@@ -29,7 +29,6 @@ import axios from "axios";
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { Label } from "@radix-ui/react-label";
 import FileUpload from "@/app/components/file-upload";
-import { ProfilePictureUpdate } from "@/app/driver/[id]/update/components/ProfilePictureUpdate";
 
 const formSchema = z.object({
   nationalInsuranceNumber: z.string(),

@@ -27,7 +27,6 @@ import axios from "axios";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import FileUpload from "@/app/components/file-upload";
 import { Label } from "@/components/ui/label";
-import { ProfilePictureUpload } from "./ProfilePictureUpload";
 
 const formSchema = z.object({
   nationalInsuranceNumber: z.string(),
@@ -222,23 +221,6 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
               )}
             />
           </div>
-
-          <div className="border-t pt-2">
-            <Label className="text-lg">Profile Picture </Label>
-          </div>
-          <ProfilePictureUpload control={form.control}/>
-          {/* <FormField
-            name="insuranceFile"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FileUpload
-                  uploadedFiles={field.value ? [field.value] : undefined}
-                  onUploadComplete={(files) => field.onChange(files[0])}
-                />
-              </FormItem>
-            )}
-          /> */}
 
           <div className="border-t pt-2">
             <Label className="text-lg">Insurance</Label>
