@@ -15,7 +15,7 @@ import {
   FilterFn,
   FilterFns
 } from "@tanstack/react-table";
-import { ArrowUpDown, PenIcon, TrashIcon } from "lucide-react";
+import { ArrowUpDown, PenIcon, TrashIcon, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -101,6 +101,10 @@ export function DriversTable() {
     null
   );
 
+  const handleOnClickView = (row:Driver) => {
+    navigate(`/driver-details/${row.id}`);
+  }
+
   const handleOnClickEdit = (row:Driver) => {
     navigate(`/driver/${row.id}/update`);
   }
@@ -123,6 +127,7 @@ export function DriversTable() {
         cell: ({ row }) => {
           return (
             <div className="flex gap-2">
+              <Eye onClick={() => handleOnClickView(row.original)} />
               <PenIcon onClick={() => handleOnClickEdit(row.original)} />
               <TrashIcon onClick={() => handleOnClickDelete(row.original)} />
             </div>
