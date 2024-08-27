@@ -86,7 +86,7 @@ const formSchema = z.object({
   // .min(2, {
   //   message: "Note must be at least 2 characters.",
   // }),
-  photo: z.string().optional(),
+  photo: z.string().optional().nullable(),
 });
 
 type FormType = z.infer<typeof formSchema>;
