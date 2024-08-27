@@ -116,6 +116,7 @@ const formSchema = z.object({
   // .min(2, {
   //   message: "file details must be at least 2 characters.",
   // }),
+  
 });
 
 type FormType = z.infer<typeof formSchema>;
@@ -147,6 +148,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       lastCheckedDate: "",
       additionalFiles: "",
       file: "",
+      
     },
   });
 
@@ -238,6 +240,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
     <Form {...form}>
       <div>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
               control={form.control}

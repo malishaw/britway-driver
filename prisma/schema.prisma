@@ -87,6 +87,7 @@ model DriverPersonalData {
   companyNumber    String?
   companyVatNumber String?
   note             String?
+  photo            String?
 
   driverData   DriverData? @relation(fields: [driverDataId], references: [id])
   driverDataId String?     @unique

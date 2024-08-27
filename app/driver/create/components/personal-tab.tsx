@@ -20,6 +20,9 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { IDriverData } from "@/app/typings/interfaces/driverData";
 import axios from "axios";
 
+import FileUpload from "@/app/components/file-upload";
+
+
 const formSchema = z.object({
   title: z.string(),
   // .min(2, {
@@ -85,6 +88,8 @@ const formSchema = z.object({
   // .min(2, {
   //   message: "Note must be at least 2 characters.",
   // }),
+  photo: z.string().optional(),
+
 });
 
 type FormType = z.infer<typeof formSchema>;
@@ -114,6 +119,7 @@ const GeneralTab: FC<PersonalTabProps> = ({ onCreate, data }) => {
       companyNumber: "",
       companyVatNumber: "",
       note: "",
+      photo: "",
     },
   });
 
@@ -158,6 +164,21 @@ const GeneralTab: FC<PersonalTabProps> = ({ onCreate, data }) => {
     <Form {...form}>
       <div>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+            name="photo"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Profile Photo</FormLabel>
+                <FileUpload
+                  uploadedFiles={field.value ? [field.value] : undefined}
+                  onUploadComplete={(files) => field.onChange(files[0])}
+                />
+                <FormDescription>Upload a profile photo (max 4MB)</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <div className="grid lg:grid-cols-3 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
               control={form.control}
