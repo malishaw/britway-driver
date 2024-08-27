@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect,useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -117,12 +117,14 @@ const formSchema = z.object({
   //   message: "file details must be at least 2 characters.",
   // }),
 });
+
 type FormType = z.infer<typeof formSchema>;
 
 export interface IOtherTabProps {
   onCreate: (data: IDriverData) => void;
   data: IDriverData | null;
 }
+
 const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
@@ -185,6 +187,52 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       form.reset(data.otherData);
     }
   }, [data]);
+
+
+
+  const [dateColors, setDateColors] = useState({
+    insuranceExpiryDate: '',
+    drivingLicenceExpiryDate: '',
+    PCOLicenceExpiryDate: '',
+    MOTLicenceExpiryDate: '',
+    PHVLicenceExpiryDate: '',
+  });
+  
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      const calculateColor = (dateValue: string | number | Date | undefined) => {
+        if (!dateValue) {
+          return ''; // Return empty if dateValue is undefined
+        }
+  
+        const enteredDate = new Date(dateValue);
+        const now = new Date();
+  
+        const timeDiff = enteredDate.getTime() - now.getTime();
+        const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  
+        if (dayDiff <= 2) {
+          return 'orange'; // Set the color to orange if within 2 days
+        } else if (dayDiff > 2 && dayDiff <= 14) {
+          return 'red'; // Set the color to red if within 2 to 14 days
+        } else {
+          return ''; // Reset the color if not within the specified ranges
+        }
+      };
+  
+      if (name) {
+        setDateColors((prevColors) => ({
+          ...prevColors,
+          [name]: calculateColor(value[name]),
+        }));
+      }
+    });
+  
+    return () => subscription.unsubscribe();
+  }, [form]);
+  
+  
+
 
   return (
     <Form {...form}>
@@ -261,6 +309,13 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
                       type="date"
                       placeholder="Insurance Expiry Date"
                       {...field}
+                      style={{
+                        color: dateColors.insuranceExpiryDate,       // Change the font color
+                        borderColor: dateColors.insuranceExpiryDate,  // Change the border color
+                        borderWidth: '2px',                               // Ensure the border is visible
+                        borderStyle: 'solid',                             // Set the border style to solid
+                      }}
+                    
                     />
                   </FormControl>
                   <FormMessage />
@@ -345,23 +400,31 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
                 </FormItem>
               )}
             />
+    
             <FormField
-              name="drivingLicenceExpiryDate"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Driving Licence Expiry Date</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      placeholder="Driving Licence Expiry Date"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+  name="drivingLicenceExpiryDate"
+  control={form.control}
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Driving Licence Expiry Date</FormLabel>
+      <FormControl>
+        <Input
+          type="date"
+          placeholder="Driving Licence Expiry Date"
+          {...field}
+          style={{
+            color: dateColors.drivingLicenceExpiryDate,       // Change the font color
+            borderColor: dateColors.drivingLicenceExpiryDate,  // Change the border color
+            borderWidth: '2px',                               // Ensure the border is visible
+            borderStyle: 'solid',                             // Set the border style to solid
+          }}
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
           </div>
 
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
@@ -451,6 +514,12 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
                       type="date"
                       placeholder="PCO Licence Expiry Date"
                       {...field}
+                      style={{
+                        color: dateColors.PCOLicenceExpiryDate,       // Change the font color
+                        borderColor: dateColors.PCOLicenceExpiryDate,  // Change the border color
+                        borderWidth: '2px',                               // Ensure the border is visible
+                        borderStyle: 'solid',                             // Set the border style to solid
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -546,6 +615,12 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
                       type="date"
                       placeholder="MOT Expiry Date"
                       {...field}
+                      style={{
+                        color: dateColors.MOTLicenceExpiryDate,       // Change the font color
+                        borderColor: dateColors.MOTLicenceExpiryDate,  // Change the border color
+                        borderWidth: '2px',                               // Ensure the border is visible
+                        borderStyle: 'solid',                             // Set the border style to solid
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -641,6 +716,12 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
                       type="date"
                       placeholder="PHV Licence Expiry Date"
                       {...field}
+                      style={{
+                        color: dateColors.PHVLicenceExpiryDate,       // Change the font color
+                        borderColor: dateColors.PHVLicenceExpiryDate,  // Change the border color
+                        borderWidth: '2px',                               // Ensure the border is visible
+                        borderStyle: 'solid',                             // Set the border style to solid
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
