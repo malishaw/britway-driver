@@ -234,8 +234,6 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
     <Form {...form}>
       <div >
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {/* call for update the profile */}
-        <ProfilePictureUpdate control={form.control} currentPicture={undefined} userName={undefined}/>
           <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
               control={form.control}

@@ -49,6 +49,7 @@ export const getDrivers = () => {
       personalData: {
         select: {
           mobileNumber: true,
+          photo: true,
         },
       },
     },
