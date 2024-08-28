@@ -126,7 +126,10 @@ const GeneralTab: FC<PersonalTabProps> = ({ onCreate, data }) => {
         generalData: {
           ...data?.generalData,
         },
-        personalData: values,
+        personalData: {
+          ...values,
+          photo: values.photo || undefined,
+        },
         otherData: data?.otherData,
       };
       axios.put(`/api/driver/${data.id}`, requestData).then(
@@ -141,7 +144,6 @@ const GeneralTab: FC<PersonalTabProps> = ({ onCreate, data }) => {
       return;
     }
   }
-
   useEffect(() => {
     if (data) {
       form.reset(data.personalData);

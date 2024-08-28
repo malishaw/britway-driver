@@ -9,6 +9,8 @@ import { Avatar } from "@radix-ui/react-avatar";
 import { AvatarImage } from "@/components/ui/avatar";
 import { Row } from "react-day-picker";
 
+
+
 interface DriverDetail {
   label: string;
   value: string | undefined;
@@ -130,7 +132,7 @@ export default function YourPage() {
           <DetailComponent
             key={index}
             label={detail.label}
-            value={detail.value}
+            value={detail.value || ''}
           />
         ))}
         <div className="flex gap-2 mt-8">

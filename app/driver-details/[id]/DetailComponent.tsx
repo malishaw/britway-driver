@@ -7,7 +7,7 @@ interface DetailItemProps {
 
 const defaultDetailItemProps: DetailItemProps = {
   label: "",
-  value: "",
+  value: [], // Assign an empty array instead of an empty string
 };
 
 const DetailItem: React.FC<DetailItemProps> = ({ label, value }) => {
