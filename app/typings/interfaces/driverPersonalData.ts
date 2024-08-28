@@ -15,4 +15,5 @@ export interface IDriverPersonalData {
     companyNumber?: string
     companyVatNumber?: string
     note?: string
+    photo? : string
   }
