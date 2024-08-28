@@ -344,7 +344,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
   />
 </div>
 
-<div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+{/* <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
   <FormField
     control={form.control}
     name="insuranceVerifyStatus"
@@ -386,7 +386,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       </FormItem>
     )}
   />
-</div>
+</div> */}
 
           {/* <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
             <FormField
@@ -471,7 +471,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
   />
 </div>
 
-<div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+{/* <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
   <FormField
     control={form.control}
     name="drivingLicenseVerifyStatus"
@@ -513,7 +513,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       </FormItem>
     )}
   />
-</div>
+</div> */}
 
 
 
@@ -601,7 +601,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
   />
 </div>
 
-<div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+{/* <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
   <FormField
     control={form.control}
     name="PCOLicenseVerifyStatus"
@@ -643,7 +643,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       </FormItem>
     )}
   />
-</div>
+</div> */}
 
 
           {/* <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
@@ -729,7 +729,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
   />
 </div>
 
-<div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+{/* <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
   <FormField
     control={form.control}
     name="MOTLicenseVerifyStatus"
@@ -771,7 +771,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       </FormItem>
     )}
   />
-</div>
+</div> */}
 
 
           {/* <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
@@ -858,7 +858,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
   />
 </div>
 
-<div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
+{/* <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-4">
   <FormField
     control={form.control}
     name="PHVLicenseVerifyStatus"
@@ -900,7 +900,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       </FormItem>
     )}
   />
-</div>
+</div> */}
 
 
           {/*<div className="grid grid-cols-2 gap-4">*/}
