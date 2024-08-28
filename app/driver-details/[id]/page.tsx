@@ -3,7 +3,11 @@ import React, {useEffect} from "react";
 import Image from "next/image";
 import DetailComponent from "./DetailComponent";
 import {IDriverData} from "@/app/typings/interfaces/driverData";
-import {useParams} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
+import { useCustomNavigation } from "@/app/hooks";
+import { Avatar } from "@radix-ui/react-avatar";
+import { AvatarImage } from "@/components/ui/avatar";
+import { Row } from "react-day-picker";
 
 interface DriverDetail {
   label: string;
@@ -65,31 +69,62 @@ export default function YourPage() {
     ]
   }
 
+  const {navigate} = useCustomNavigation();
+  const handleOnClickEdit = (row:DriverDetail) => {
+    navigate(`/driver/${id}/update`);
+  }
+  const handleOnClickDelete = async (row: DriverDetail) => {
+    try {
+      // Send a DELETE request to the API endpoint
+      const response = await fetch(`/api/driver/${id}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        // If the deletion is successful, navigate to the desired page
+        router.push('/driver')
+      } else {
+        // Handle the error case
+        console.error('Failed to delete driver')
+      }
+    } catch (error) {
+      console.error('An error occurred while deleting the driver:', error)
+    }
+  }
+  const router = useRouter();
+
+  const handleGoBack = () => {
+    router.push('/driver');
+  };
+
   return (
     <div className="w-full">
       <div className="container mx-auto bg-white p-8 w-full">
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center">
-            <Image
-              src="/profile-picture.jpeg"
-              alt="Profile Picture"
-              width={96}
-              height={96}
-              className="rounded-full mr-6"
-            />
+          <div className="flex gap-7 items-center">
+          <Avatar className="w-24 h-24 ">
+  <AvatarImage
+    src={driverData?.personalData?.photo || "/default-profile-picture.jpeg"}
+    alt="Profile Picture"
+    className="rounded-full"
+  />
+</Avatar>
+
             <div>
-              <h1 className="text-2xl font-bold">John Doe</h1>
-              <p className="text-gray-600">Member since 2021</p>
+            <h1 className="text-2xl font-bold">
+    {driverData?.generalData.displayName || 'John Doe'}
+  </h1>
+              {/* <p className="text-gray-600">Member since 2021</p> */}
             </div>
           </div>
-          <div className="space-x-4">
+          {/* <div className="space-x-4">
             <button className="bg-blue-500 text-white px-4 py-2 rounded">
               Jobs
             </button>
             <button className="bg-blue-500 text-white px-4 py-2 rounded">
               Vehicles
             </button>
-          </div>
+          </div> */}
         </div>
         {mapDriverData()?.map((detail, index) => (
           <DetailComponent
@@ -99,12 +134,27 @@ export default function YourPage() {
           />
         ))}
         <div className="flex gap-2 mt-8">
-          <button className="bg-blue-600 text-white px-4 py-2 ">Edit</button>
-          <button className="bg-gray-500 text-white px-4 py-2 ">Delete</button>
-          <button className="bg-gray-500 text-white px-4 py-2">Logout</button>
-          <button className="px-4 py-2 ">Back</button>
+        <button
+      className="bg-blue-600 text-white px-4 py-2"
+      onClick={() => handleOnClickEdit(mapDriverData()[0])}
+    >
+      Edit
+    </button>
+    <button
+            className="bg-gray-500 text-white px-4 py-2"
+            onClick={() => handleOnClickDelete(mapDriverData()[0])}
+          >
+            Delete
+          </button>          {/* <button className="bg-gray-500 text-white px-4 py-2">Logout</button> */}
+           <button className="px-4 py-2" onClick={handleGoBack}>
+            Back
+          </button>
         </div>
       </div>
     </div>
-  );
-}
+  );}
+// }
+// function setSelectedDriver(row: DriverData) {
+//   throw new Error("Function not implemented.");
+// }
+
