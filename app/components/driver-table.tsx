@@ -31,7 +31,7 @@ import axios from "axios";
 import { IDriverData } from "../typings/interfaces/driverData";
 import ConfirmationDialog from "./shared/confirmation-dialog/ConfirmationDialog";
 import { useCustomNavigation } from "../hooks";
-import Image from "next/image";
+
 
 export type Driver = {
   id: string;
@@ -45,18 +45,30 @@ export type Driver = {
 export const columns: ColumnDef<Driver>[] = [
   {
     id: "photo",
-    cell: ({ row }) => (
-      <Avatar>
-        <AvatarImage src={row.original.photo} alt="profilePicture" />
-        <AvatarFallback>
-          {row.original.photo ? (
-            <Image src={row.original.photo} alt="profilePicture" width={40} height={40} />
+    header: "Photo",
+    accessorKey: "photo",
+    cell: ({ row }) => {
+      const photo = row.original.photo;
+      const name = row.original.name;
+  
+      return (
+        <Avatar>
+          {photo ? (
+            <div className="flex items-center justify-center w-full h-full bg-gray-300 rounded-full text-gray-600">
+              <AvatarImage src={photo} alt="photo" />
+            </div>
           ) : (
-            row.original.name.substring(0, 2).toUpperCase()
+            <AvatarFallback>
+              <div className="flex items-center justify-center w-full h-full bg-gray-300 rounded-full text-gray-600 font-semibold">
+                {name.substring(0, 2).toUpperCase()}
+              </div>
+            </AvatarFallback>
           )}
-        </AvatarFallback>
-      </Avatar>
-    ),  },
+        </Avatar>
+      );
+    },
+  },
+  
   {
     accessorKey: "name",
     header: "Name",
@@ -151,6 +163,7 @@ export function DriversTable() {
     fetchDrivers();
   }, []);
 
+
   const fetchDrivers = () => {
     try {
       axios.get("/api/driver").then((response) => {
@@ -160,6 +173,7 @@ export function DriversTable() {
           name: driver.generalData.displayName,
           email: driver.generalData.email,
           phone: driver.personalData?.mobileNumber,
+          photo: driver.personalData?.photo,
         }));
         setData(preparedData);
       });
