@@ -111,6 +111,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
         language: values.language,
         timezone: values.timezone,
         fleetOperator: values.fleetOperator,
+        photo: undefined
       },
       isDeleted: false,
       personalData: data?.personalData,
