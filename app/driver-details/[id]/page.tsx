@@ -44,17 +44,17 @@ export default function YourPage() {
       {label: "Last Name", value: driverData?.personalData?.lastName},
       {label: "Date Of Birth", value: driverData?.personalData?.dateOfBirth},
       {label: "Mobile Number", value: driverData?.personalData?.mobileNumber},
-      {label: "Telephone Number", value: driverData?.personalData?.telephoneNumber},
-      {label: "Emergency Number", value: driverData?.personalData?.emergencyNumber},
+      // {label: "Telephone Number", value: driverData?.personalData?.telephoneNumber},
+      // {label: "Emergency Number", value: driverData?.personalData?.emergencyNumber},
       {label: "Address", value: driverData?.personalData?.address},
       {label: "City", value: driverData?.personalData?.city},
       {label: "PostCode", value: driverData?.personalData?.postCode},
-      {label: "Country", value: driverData?.personalData?.country},
-      {label: "Company Name", value: driverData?.personalData?.companyName},
-      {label: "Company Number", value: driverData?.personalData?.companyNumber},
-      {label: "Company VAT Number", value: driverData?.personalData?.companyVatNumber},
+      // {label: "Country", value: driverData?.personalData?.country},
+      // {label: "Company Name", value: driverData?.personalData?.companyName},
+      // {label: "Company Number", value: driverData?.personalData?.companyNumber},
+      // {label: "Company VAT Number", value: driverData?.personalData?.companyVatNumber},
       {label: "National Insurance Number", value: driverData?.otherData?.nationalInsuranceNumber},
-      {label: "Bank Account Details", value: driverData?.otherData?.bankAccountDetails},
+      // {label: "Bank Account Details", value: driverData?.otherData?.bankAccountDetails},
       {label: "Insurance Number", value: driverData?.otherData?.insurance},
       {label: "Insurance Expiry Date", value: driverData?.otherData?.insuranceExpiryDate},
       {label: "Driving Licence Number", value: driverData?.otherData?.drivingLicence},
@@ -71,6 +71,10 @@ export default function YourPage() {
       {label: "Last Checked Date", value: driverData?.otherData?.lastCheckedDate},
     ]
   }
+
+const driverDataList = mapDriverData();
+const leftSideData = driverDataList.slice(0, Math.ceil(driverDataList.length / 2));
+const rightSideData = driverDataList.slice(Math.ceil(driverDataList.length / 2));
 
   const handleOnClickEdit = (row: DriverDetail) => {
     navigate(`/driver/${id}/update`);
@@ -115,6 +119,7 @@ export default function YourPage() {
   return (
     <div className="w-full">
       <div className="container mx-auto bg-white p-8 w-full">
+        {/* Profile Header */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex gap-7 items-center">
             <Avatar className="w-24 h-24 ">
@@ -129,10 +134,10 @@ export default function YourPage() {
               <h1 className="text-2xl font-bold">
                 {driverData?.generalData.displayName || ''}
               </h1>
-                            {/* <p className="text-gray-600">Member since 2021</p> */}
+              {/* <p className="text-gray-600">Member since 2021</p> */}
             </div>
           </div>
-           {/* <div className="space-x-4">
+          {/* <div className="space-x-4">
             <button className="bg-blue-500 text-white px-4 py-2 rounded">
               Jobs
             </button>
@@ -141,13 +146,33 @@ export default function YourPage() {
             </button>
           </div> */}
         </div>
-        {mapDriverData()?.map((detail, index) => (
-          <DetailComponent
-            key={index}
-            label={detail.label}
-            value={detail.value || ''}
-          />
-        ))}
+  
+        {/* Driver Details */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 rounded-lg shadow-md">
+        {/* Left Side */}
+          <div>
+            {mapDriverData().slice(0, Math.ceil(mapDriverData().length / 2)).map((detail, index) => (
+              <DetailComponent
+                key={index}
+                label={detail.label}
+                value={detail.value || ''}
+              />
+            ))}
+          </div>
+  
+          {/* Right Side */}
+          <div>
+            {mapDriverData().slice(Math.ceil(mapDriverData().length / 2)).map((detail, index) => (
+              <DetailComponent
+                key={index}
+                label={detail.label}
+                value={detail.value || ''}
+              />
+            ))}
+          </div>
+        </div>
+  
+        {/* Action Buttons */}
         <div className="flex gap-2 mt-8">
           <button
             className="bg-blue-600 text-white px-4 py-2"
@@ -161,19 +186,20 @@ export default function YourPage() {
           >
             Delete
             </button>          {/* <button className="bg-gray-500 text-white px-4 py-2">Logout</button> */}
-            <button className="px-4 py-2" onClick={handleGoBack}>
+          <button className="px-4 py-2" onClick={handleGoBack}>
             Back
           </button>
         </div>
       </div>
-
+  
+      {/* Confirmation Dialog */}
       <ConfirmationDialog
-  title="Are you sure?"
-  description="Do you want to delete this driver?"
-  onConfirm={handleConfirmDelete}
-  onDecline={handleCancelDelete}
-  open={showConfirmation}
-/>
+        title="Are you sure?"
+        description="Do you want to delete this driver?"
+        onConfirm={handleConfirmDelete}
+        onDecline={handleCancelDelete}
+        open={showConfirmation}
+      />
 
     </div>
   );
