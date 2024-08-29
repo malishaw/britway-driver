@@ -1,5 +1,6 @@
 'use client';
-import React, {useEffect} from "react";
+
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import DetailComponent from "./DetailComponent";
 import {IDriverData} from "@/app/typings/interfaces/driverData";
@@ -8,8 +9,7 @@ import { useCustomNavigation } from "@/app/hooks";
 import { Avatar } from "@radix-ui/react-avatar";
 import { AvatarImage } from "@/components/ui/avatar";
 import { Row } from "react-day-picker";
-
-
+import ConfirmationDialog from "@/app/components/shared/confirmation-dialog/ConfirmationDialog";
 
 interface DriverDetail {
   label: string;
@@ -17,10 +17,11 @@ interface DriverDetail {
 }
 
 export default function YourPage() {
-
   const [driverData, setDriverData] = React.useState<IDriverData|null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const {id} = useParams();
-
+  const router = useRouter();
+  const { navigate } = useCustomNavigation();
 
   useEffect(() => {
     fetchData();
@@ -71,10 +72,10 @@ export default function YourPage() {
     ]
   }
 
-  const {navigate} = useCustomNavigation();
-  const handleOnClickEdit = (row:DriverDetail) => {
+  const handleOnClickEdit = (row: DriverDetail) => {
     navigate(`/driver/${id}/update`);
   }
+
   const handleOnClickDelete = async (row: DriverDetail) => {
     try {
       // Send a DELETE request to the API endpoint
@@ -83,20 +84,32 @@ export default function YourPage() {
       })
 
       if (response.ok) {
-        // If the deletion is successful, navigate to the desired page
+                // If the deletion is successful, navigate to the desired page
         router.push('/driver')
       } else {
-        // Handle the error case
+                // Handle the error case
         console.error('Failed to delete driver')
       }
     } catch (error) {
       console.error('An error occurred while deleting the driver:', error)
     }
   }
-  const router = useRouter();
 
   const handleGoBack = () => {
     router.push('/driver');
+  };
+
+  const handleDeleteClick = () => {
+    setShowConfirmation(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    await handleOnClickDelete(mapDriverData()[0]);
+    setShowConfirmation(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmation(false);
   };
 
   return (
@@ -104,22 +117,22 @@ export default function YourPage() {
       <div className="container mx-auto bg-white p-8 w-full">
         <div className="flex justify-between items-center mb-8">
           <div className="flex gap-7 items-center">
-          <Avatar className="w-24 h-24 ">
-  <AvatarImage
-    src={driverData?.personalData?.photo || "/default-profile-picture.jpeg"}
-    alt="Profile Picture"
-    className="rounded-full"
-  />
-</Avatar>
+            <Avatar className="w-24 h-24 ">
+              <AvatarImage
+                src={driverData?.personalData?.photo || "/default-profile-picture.jpeg"}
+                alt="Profile Picture"
+                className="rounded-full"
+              />
+            </Avatar>
 
             <div>
-            <h1 className="text-2xl font-bold">
-    {driverData?.generalData.displayName || ''}
-  </h1>
-              {/* <p className="text-gray-600">Member since 2021</p> */}
+              <h1 className="text-2xl font-bold">
+                {driverData?.generalData.displayName || ''}
+              </h1>
+                            {/* <p className="text-gray-600">Member since 2021</p> */}
             </div>
           </div>
-          {/* <div className="space-x-4">
+           {/* <div className="space-x-4">
             <button className="bg-blue-500 text-white px-4 py-2 rounded">
               Jobs
             </button>
@@ -136,27 +149,32 @@ export default function YourPage() {
           />
         ))}
         <div className="flex gap-2 mt-8">
-        <button
-      className="bg-blue-600 text-white px-4 py-2"
-      onClick={() => handleOnClickEdit(mapDriverData()[0])}
-    >
-      Edit
-    </button>
-    <button
+          <button
+            className="bg-blue-600 text-white px-4 py-2"
+            onClick={() => handleOnClickEdit(mapDriverData()[0])}
+          >
+            Edit
+          </button>
+          <button
             className="bg-gray-500 text-white px-4 py-2"
-            onClick={() => handleOnClickDelete(mapDriverData()[0])}
+            onClick={handleDeleteClick}
           >
             Delete
-          </button>          {/* <button className="bg-gray-500 text-white px-4 py-2">Logout</button> */}
-           <button className="px-4 py-2" onClick={handleGoBack}>
+            </button>          {/* <button className="bg-gray-500 text-white px-4 py-2">Logout</button> */}
+            <button className="px-4 py-2" onClick={handleGoBack}>
             Back
           </button>
         </div>
       </div>
-    </div>
-  );}
-// }
-// function setSelectedDriver(row: DriverData) {
-//   throw new Error("Function not implemented.");
-// }
 
+      <ConfirmationDialog
+  title="Are you sure?"
+  description="Do you want to delete this driver?"
+  onConfirm={handleConfirmDelete}
+  onDecline={handleCancelDelete}
+  open={showConfirmation}
+/>
+
+    </div>
+  );
+}
