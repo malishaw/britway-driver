@@ -65,7 +65,7 @@ export default function YourPage() {
       {label: "PHV Licence Number", value: driverData?.otherData?.PHVLicence},
       {label: "PHV Licence Expiry Date", value: driverData?.otherData?.PHVLicenceExpiryDate},
       {label: "Driver Activity Status", value: driverData?.otherData?.driverActivityStatus},
-      {label: "Driver Licence Address Status", value: driverData?.otherData?.driveAddressStatus},
+      {label: "Driver Licence Address Status", value: driverData?.otherData?.driverAddressStatus},
       {label: "BGS Check Status", value: driverData?.otherData?.bgsStatus},
       {label: "Last Checked Date", value: driverData?.otherData?.lastCheckedDate},
     ]
@@ -114,7 +114,7 @@ export default function YourPage() {
 
             <div>
             <h1 className="text-2xl font-bold">
-    {driverData?.generalData.displayName || 'John Doe'}
+    {driverData?.generalData.displayName || ''}
   </h1>
               {/* <p className="text-gray-600">Member since 2021</p> */}
             </div>
