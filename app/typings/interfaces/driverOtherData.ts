@@ -12,7 +12,7 @@ export interface IDriverOtherData {
     PHVLicence: string
     PHVLicenceExpiryDate: string
     driverActivityStatus?: "Available" | "Unavailable";
-    driveAddressStatus?: "Verified" | "Not Verified";
+    driverAddressStatus?: "Verified" | "Not Verified";
     bgsStatus?: "Checked" | "Unchecked";
     lastCheckedDate: string
     additionalFiles: string
