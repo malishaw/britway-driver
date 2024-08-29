@@ -172,20 +172,24 @@ export function DriversTable() {
   const fetchDrivers = () => {
     try {
       axios.get("/api/driver").then((response) => {
-        const preparedData = response.data.map((driver: IDriverData) => ({
-          id: driver.id,
-          uniqueId: driver.generalData.uniqueId,
-          name: driver.generalData.displayName,
-          email: driver.generalData.email,
-          phone: driver.personalData?.mobileNumber,
-          photo: driver.personalData?.photo,
-        }));
+        const preparedData = response.data
+          .map((driver: IDriverData) => ({
+            id: driver.id,
+            uniqueId: driver.generalData.uniqueId,
+            name: driver.generalData.displayName,
+            email: driver.generalData.email,
+            phone: driver.personalData?.mobileNumber,
+            photo: driver.personalData?.photo,
+          }))
+          .reverse();
         setData(preparedData);
       });
     } catch (error) {
       console.error(error);
     }
   };
+  
+  
 
   const handleDelete = () => {
     try {
