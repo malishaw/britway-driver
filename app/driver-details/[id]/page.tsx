@@ -73,8 +73,8 @@ export default function YourPage() {
   }
 
 const driverDataList = mapDriverData();
-const leftSideData = driverDataList.slice(0, Math.ceil(driverDataList.length / 2));
-const rightSideData = driverDataList.slice(Math.ceil(driverDataList.length / 2));
+// const leftSideData = driverDataList.slice(0, Math.ceil(driverDataList.length / 2));
+// const rightSideData = driverDataList.slice(Math.ceil(driverDataList.length / 2));
 
   const handleOnClickEdit = (row: DriverDetail) => {
     navigate(`/driver/${id}/update`);
@@ -148,7 +148,7 @@ const rightSideData = driverDataList.slice(Math.ceil(driverDataList.length / 2))
         </div>
   
         {/* Driver Details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 ">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
         {/* Left Side */}
           <div>
             {mapDriverData().slice(0, Math.ceil(mapDriverData().length / 2)).map((detail, index) => (
