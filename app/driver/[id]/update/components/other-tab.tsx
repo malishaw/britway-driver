@@ -1008,7 +1008,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>BGS Check Status</FormLabel>
+                <FormLabel>DBS Check Status</FormLabel>
 
                 <Select
                   onValueChange={field.onChange}

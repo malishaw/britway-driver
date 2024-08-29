@@ -67,7 +67,7 @@ export default function YourPage() {
       {label: "PHV Licence Expiry Date", value: driverData?.otherData?.PHVLicenceExpiryDate},
       {label: "Driver Activity Status", value: driverData?.otherData?.driverActivityStatus},
       {label: "Driver Licence Address Status", value: driverData?.otherData?.driverAddressStatus},
-      {label: "BGS Check Status", value: driverData?.otherData?.bgsStatus},
+      {label: "DBS Check Status", value: driverData?.otherData?.bgsStatus},
       {label: "Last Checked Date", value: driverData?.otherData?.lastCheckedDate},
     ]
   }
@@ -148,7 +148,7 @@ const rightSideData = driverDataList.slice(Math.ceil(driverDataList.length / 2))
         </div>
   
         {/* Driver Details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 rounded-lg shadow-md">
+        <div className="grid grid-cols-1 md:grid-cols-2 ">
         {/* Left Side */}
           <div>
             {mapDriverData().slice(0, Math.ceil(mapDriverData().length / 2)).map((detail, index) => (
