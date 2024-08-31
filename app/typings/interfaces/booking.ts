@@ -1,4 +1,5 @@
 export type Booking = {
+  Email: string;
   "Journey date": string;
   "Ref ID": string;
   Driver: string;
@@ -31,7 +32,6 @@ export type Booking = {
   "Infant seats": string;
   Wheelchairs: string;
   "Waiting time": string;
-  Email: string;
   "Meet & Greet": string;
   Source: string;
   Customer: string;
