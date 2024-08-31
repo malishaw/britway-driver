@@ -20,6 +20,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { IDriverData } from "@/app/typings/interfaces/driverData";
 import axios from "axios";
 import FileUpload from "@/app/components/file-upload";
+import Swal from "sweetalert2";
 
 const formSchema = z.object({
   title: z.string(),
@@ -122,23 +123,27 @@ const GeneralTab: FC<PersonalTabProps> = ({ onCreate, data }) => {
 
   function onSubmit(values: FormType) {
     if (data?.generalData) {
-      const requestData: IDriverData = {
-        generalData: {
-          ...data?.generalData,
-        },
+      const requestData = {
         personalData: {
           ...values,
           photo: values.photo || undefined,
-        },
-        otherData: data?.otherData,
+        }
       };
       axios.put(`/api/driver/${data.id}`, requestData).then(
         (response) => {
-          onCreate(response.data);
-          toast("Updated successfully");
+          onCreate({...data, ...requestData});
+          Swal.fire({
+            icon: 'success',
+            title: 'Updated successfully',
+            text: 'The driver data has been updated.',
+          });
         },
         (error) => {
-          toast("Update failed");
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while updating the driver data.',
+          });
         }
       );
       return;

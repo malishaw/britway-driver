@@ -29,6 +29,7 @@ import axios from "axios";
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { Label } from "@radix-ui/react-label";
 import FileUpload from "@/app/components/file-upload";
+import Swal from "sweetalert2";
 
 const formSchema = z.object({
   nationalInsuranceNumber: z.string(),
@@ -105,25 +106,25 @@ const formSchema = z.object({
   // }),
 
   //updated from new feaure
-  insuranceFile: z.string(),
-  insuranceVerifyStatus: z.string(),
-  insuranceLastVerifyDate: z.string(),
+  insuranceFile: z.string().nullable(),
+  insuranceVerifyStatus: z.string().nullable(),
+  insuranceLastVerifyDate: z.string().nullable(),
   
-  drivingLicenseFile: z.string(),
-  drivingLicenseVerifyStatus: z.string(),
-  drivingLicenseLastVerifyDate: z.string(),
+  drivingLicenseFile: z.string().nullable(),
+  drivingLicenseVerifyStatus: z.string().nullable(),
+  drivingLicenseLastVerifyDate: z.string().nullable(),
 
-  PCOLicenseFile: z.string(),
-  PCOLicenseVerifyStatus: z.string(),
-  PCOLicenseLastVerifyDate: z.string(),
+  PCOLicenseFile: z.string().nullable(),
+  PCOLicenseVerifyStatus: z.string().nullable(),
+  PCOLicenseLastVerifyDate: z.string().nullable(),
 
-  MOTLicenseFile: z.string(),
-  MOTLicenseVerifyStatus: z.string(),
-  MOTLicenseLastVerifyDate: z.string(),
+  MOTLicenseFile: z.string().nullable(),
+  MOTLicenseVerifyStatus: z.string().nullable(),
+  MOTLicenseLastVerifyDate: z.string().nullable(),
 
-  PHVLicenseFile: z.string(),
-  PHVLicenseVerifyStatus: z.string(),
-  PHVLicenseLastVerifyDate: z.string(),
+  PHVLicenseFile: z.string().nullable(),
+  PHVLicenseVerifyStatus: z.string().nullable(),
+  PHVLicenseLastVerifyDate: z.string().nullable(),
 
  
 });
@@ -194,11 +195,19 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       };
       axios.put(`/api/driver/${data.id}`, requestData).then(
         (response) => {
-          onCreate({...response.data, ...requestData});
-          toast("Updated successfully")
+          onCreate({...data, ...requestData});
+          Swal.fire({
+            icon: 'success',
+            title: 'Updated successfully',
+            text: 'The driver data has been updated.',
+          });
         },
         (error) => {
-          toast("Updated failed")
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while updating the driver data.',
+          });
         }
       );
       return;

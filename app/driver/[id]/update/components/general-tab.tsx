@@ -96,7 +96,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
 
   useEffect(() => {
     if (data) {
-      form.reset(data.generalData);
+      form.reset({...data.generalData, confirmPassword: ""});
     }
   }, [data]);
 
@@ -113,16 +113,14 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
         fleetOperator: values.fleetOperator,
         photo: undefined
       },
-      isDeleted: false,
-      personalData: data?.personalData,
-      otherData: data?.otherData,
+      isDeleted: false
     };
 
     if (data?.id) {
       axios.put(`/api/driver/${data.id}`, requestData).then(
         (response) => {
           console.log('Updated successful123');
-          onCreate(response.data);
+          onCreate({ ...data, ...requestData });
           Swal.fire({
             icon: 'success',
             title: 'Updated successfully',
