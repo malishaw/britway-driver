@@ -1,4 +1,8 @@
+import { Driver } from "@/app/components/driver-table";
+
+
 export type Booking = {
+  driver: Driver;
   Email: string;
   "Journey date": string;
   "Ref ID": string;

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import axios from "axios";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -14,6 +15,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,6 +35,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { Booking } from "../typings";
+import { GetServerSideProps } from "next";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
@@ -61,6 +64,8 @@ const dateBetweenFilterFn: FilterFn<any> = (row, columnId, value) => {
   return true;
 };
 
+
+
 export function BookingTable({ data = [] }: { data: Booking[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: 'journeyDate', desc: true }
@@ -74,6 +79,7 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
+
   const columns: ColumnDef<Booking>[] = [
     {
       accessorKey: "journeyDate",
@@ -81,7 +87,76 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
       filterFn: "dateBetweenFilterFn",
     },
     { accessorKey: "refId", header: "Reference ID" },
-    { accessorKey: "driver", header: "Driver" },
+    // { accessorKey: "driver", header: "Driver" },
+   
+
+    // {
+    //   accessorKey: "driver",
+    //   header: "Driver",
+    //   cell: ({ getValue }) => {
+    //     const driverName = getValue() as string;
+    //     return (
+    //       <a
+    //         href={`/driver-details/${driverName}`}
+          
+    //       >
+    //         {driverName}
+    //       </a>
+    //     );
+    //   },
+    // },
+
+    
+    {
+      accessorKey: "driver",
+      header: "Driver",
+      cell: ({ getValue }) => {
+        const [driverId, setDriverId] = React.useState<string | null>(null);
+        const driver = React.useMemo(() => getValue() as string, [getValue]);
+    
+        // Parse the driver string to extract uniqueId and displayName
+        const { uniqueId, displayName } = React.useMemo(() => {
+          const [uniqueId, ...nameParts] = driver.split(" - ");
+          const displayName = nameParts.join(" ");
+          return { uniqueId, displayName };
+        }, [driver]);
+    
+        React.useEffect(() => {
+          axios
+            .get("/api/driver", { params: { uniqueId, displayName } })
+            .then((response) => {
+              const drivers = response.data;
+    
+              // Iterate over the response data to find the matching driver
+              for (const driverData of drivers) {
+                const { uniqueId: fetchedUniqueId, displayName: fetchedDisplayName } = driverData.generalData;
+    
+                console.log("fetchedUniqueId:", fetchedUniqueId);
+                console.log("fetchedDisplayName:", fetchedDisplayName);
+    
+                // Check if the fetched uniqueId and displayName match the current ones
+                if (fetchedUniqueId === uniqueId && fetchedDisplayName === displayName) {
+                  setDriverId(driverData.id);
+                  break;
+                }
+              }
+            })
+            .catch((error) => {
+              console.error("Error fetching driver ID:", error);
+            });
+        }, [uniqueId, displayName]);
+    
+        // Only render the link if driverId is available
+        return (
+          <a href={`/driver-details/${driverId}`} title={driver}>
+            {driver}
+          </a>
+        );
+      },
+    }
+    ,
+
+    
     { accessorKey: "status", header: "Status" },
     { accessorKey: "driverIncome", header: "Driver Income" },
     { accessorKey: "total", header: "Total" },
@@ -130,6 +205,9 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
       ),
     },
   ];
+
+
+
 
   const table = useReactTable({
     data,
@@ -301,3 +379,5 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
     </div>
   );
 }
+
+
