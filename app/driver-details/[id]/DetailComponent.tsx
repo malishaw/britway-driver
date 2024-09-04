@@ -16,7 +16,8 @@ const DetailItem: React.FC<DetailItemProps> = ({ label, value }) => {
       <span className="w-1/2">{label}</span>
       <span className="w-1/2">
         {label.toLowerCase().includes("status") ? (
-          <span className="bg-green-500 px-2 py-1 rounded">{value}</span>
+          <span >{value}</span>
+          //className="bg-green-500 px-2 py-1 rounded"
         ) : Array.isArray(value) ? (
           <ul className="list-none">
             {value.map((item, index) => (

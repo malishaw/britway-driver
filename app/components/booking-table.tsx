@@ -64,11 +64,9 @@ const dateBetweenFilterFn: FilterFn<any> = (row, columnId, value) => {
   return true;
 };
 
-
-
 export function BookingTable({ data = [] }: { data: Booking[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([
-    { id: 'journeyDate', desc: true }
+    { id: "journeyDate", desc: true },
   ]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -79,7 +77,6 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
-
   const columns: ColumnDef<Booking>[] = [
     {
       accessorKey: "journeyDate",
@@ -88,7 +85,6 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
     },
     { accessorKey: "refId", header: "Reference ID" },
     // { accessorKey: "driver", header: "Driver" },
-   
 
     // {
     //   accessorKey: "driver",
@@ -98,7 +94,7 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
     //     return (
     //       <a
     //         href={`/driver-details/${driverName}`}
-          
+
     //       >
     //         {driverName}
     //       </a>
@@ -106,36 +102,41 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
     //   },
     // },
 
-    
     {
       accessorKey: "driver",
       header: "Driver",
       cell: ({ getValue }) => {
         const [driverId, setDriverId] = React.useState<string | null>(null);
         const driver = React.useMemo(() => getValue() as string, [getValue]);
-    
+
         // Parse the driver string to extract uniqueId and displayName
         const { uniqueId, displayName } = React.useMemo(() => {
           const [uniqueId, ...nameParts] = driver.split(" - ");
           const displayName = nameParts.join(" ");
           return { uniqueId, displayName };
         }, [driver]);
-    
+
         React.useEffect(() => {
           axios
             .get("/api/driver", { params: { uniqueId, displayName } })
             .then((response) => {
               const drivers = response.data;
-    
+
               // Iterate over the response data to find the matching driver
               for (const driverData of drivers) {
-                const { uniqueId: fetchedUniqueId, displayName: fetchedDisplayName } = driverData.generalData;
-    
+                const {
+                  uniqueId: fetchedUniqueId,
+                  displayName: fetchedDisplayName,
+                } = driverData.generalData;
+
                 console.log("fetchedUniqueId:", fetchedUniqueId);
                 console.log("fetchedDisplayName:", fetchedDisplayName);
-    
+
                 // Check if the fetched uniqueId and displayName match the current ones
-                if (fetchedUniqueId === uniqueId && fetchedDisplayName === displayName) {
+                if (
+                  fetchedUniqueId === uniqueId &&
+                  fetchedDisplayName === displayName
+                ) {
                   setDriverId(driverData.id);
                   break;
                 }
@@ -145,18 +146,28 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
               console.error("Error fetching driver ID:", error);
             });
         }, [uniqueId, displayName]);
-    
+
         // Only render the link if driverId is available
         return (
-          <a href={`/driver-details/${driverId}`} title={driver}>
+          // <a href={`/driver-details/${driverId}`} title={driver}>
+          //   {driver}
+          // </a>
+          <a
+            href={`/driver-details/${driverId}`}
+            title={driver}
+            style={{
+              textDecoration: "none",
+              color: "blue",
+              transition: "color 0.3s ease",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#000080")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#0000FF")}
+          >
             {driver}
           </a>
         );
       },
-    }
-    ,
-
-    
+    },
     { accessorKey: "status", header: "Status" },
     { accessorKey: "driverIncome", header: "Driver Income" },
     { accessorKey: "total", header: "Total" },
@@ -205,9 +216,6 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
       ),
     },
   ];
-
-
-
 
   const table = useReactTable({
     data,
@@ -379,5 +387,3 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
     </div>
   );
 }
-
-
