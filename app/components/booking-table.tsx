@@ -1,5 +1,6 @@
 "use client";
 
+
 import * as React from "react";
 import axios from "axios";
 import {
@@ -36,6 +37,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Booking } from "../typings";
 import { GetServerSideProps } from "next";
+import DriverCell from "./DriverCell";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
@@ -84,90 +86,16 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
       filterFn: "dateBetweenFilterFn",
     },
     { accessorKey: "refId", header: "Reference ID" },
-    // { accessorKey: "driver", header: "Driver" },
-
-    // {
-    //   accessorKey: "driver",
-    //   header: "Driver",
-    //   cell: ({ getValue }) => {
-    //     const driverName = getValue() as string;
-    //     return (
-    //       <a
-    //         href={`/driver-details/${driverName}`}
-
-    //       >
-    //         {driverName}
-    //       </a>
-    //     );
-    //   },
-    // },
 
     {
       accessorKey: "driver",
       header: "Driver",
       cell: ({ getValue }) => {
-        const [driverId, setDriverId] = React.useState<string | null>(null);
-        const driver = React.useMemo(() => getValue() as string, [getValue]);
-
-        // Parse the driver string to extract uniqueId and displayName
-        const { uniqueId, displayName } = React.useMemo(() => {
-          const [uniqueId, ...nameParts] = driver.split(" - ");
-          const displayName = nameParts.join(" ");
-          return { uniqueId, displayName };
-        }, [driver]);
-
-        React.useEffect(() => {
-          axios
-            .get("/api/driver", { params: { uniqueId, displayName } })
-            .then((response) => {
-              const drivers = response.data;
-
-              // Iterate over the response data to find the matching driver
-              for (const driverData of drivers) {
-                const {
-                  uniqueId: fetchedUniqueId,
-                  displayName: fetchedDisplayName,
-                } = driverData.generalData;
-
-                console.log("fetchedUniqueId:", fetchedUniqueId);
-                console.log("fetchedDisplayName:", fetchedDisplayName);
-
-                // Check if the fetched uniqueId and displayName match the current ones
-                if (
-                  fetchedUniqueId === uniqueId &&
-                  fetchedDisplayName === displayName
-                ) {
-                  setDriverId(driverData.id);
-                  break;
-                }
-              }
-            })
-            .catch((error) => {
-              console.error("Error fetching driver ID:", error);
-            });
-        }, [uniqueId, displayName]);
-
-        // Only render the link if driverId is available
-        return (
-          // <a href={`/driver-details/${driverId}`} title={driver}>
-          //   {driver}
-          // </a>
-          <a
-            href={`/driver-details/${driverId}`}
-            title={driver}
-            style={{
-              textDecoration: "none",
-              color: "blue",
-              transition: "color 0.3s ease",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#000080")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#0000FF")}
-          >
-            {driver}
-          </a>
-        );
+        const driver = getValue() as string;
+        return <DriverCell driver={driver} />;
       },
     },
+
     { accessorKey: "status", header: "Status" },
     { accessorKey: "driverIncome", header: "Driver Income" },
     { accessorKey: "total", header: "Total" },
