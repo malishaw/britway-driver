@@ -1,6 +1,8 @@
 "use client";
 
+
 import * as React from "react";
+import axios from "axios";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -14,6 +16,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,6 +36,8 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { Booking } from "../typings";
+import { GetServerSideProps } from "next";
+import DriverCell from "./DriverCell";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
@@ -63,7 +68,7 @@ const dateBetweenFilterFn: FilterFn<any> = (row, columnId, value) => {
 
 export function BookingTable({ data = [] }: { data: Booking[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([
-    { id: 'journeyDate', desc: true }
+    { id: "journeyDate", desc: true },
   ]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -81,7 +86,16 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
       filterFn: "dateBetweenFilterFn",
     },
     { accessorKey: "refId", header: "Reference ID" },
-    { accessorKey: "driver", header: "Driver" },
+
+    {
+      accessorKey: "driver",
+      header: "Driver",
+      cell: ({ getValue }) => {
+        const driver = getValue() as string;
+        return <DriverCell driver={driver} />;
+      },
+    },
+
     { accessorKey: "status", header: "Status" },
     { accessorKey: "driverIncome", header: "Driver Income" },
     { accessorKey: "total", header: "Total" },
