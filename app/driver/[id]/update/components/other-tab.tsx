@@ -32,75 +32,75 @@ import FileUpload from "@/app/components/file-upload";
 import Swal from "sweetalert2";
 
 const formSchema = z.object({
-  nationalInsuranceNumber: z.string(),
+  nationalInsuranceNumber: z.string().nullable(),
   // .min(5, {
   //   message: "National Insurance Number must be at least 5 characters.",
   // }),
-  bankAccountDetails: z.string(),
+  bankAccountDetails: z.string().nullable(),
   // .min(5, {
   //   message: "Bank account details must be at least 5 characters.",
   // }),
-  insurance: z.string(),
+  insurance: z.string().nullable(),
   // .min(2, {
   //   message: "Insurance details must be at least 2 characters.",
   // }),
-  insuranceExpiryDate: z.string(),
+  insuranceExpiryDate: z.string().nullable(),
   // .regex(/^\d{4}-\d{2}-\d{2}$/, {
   //   message: "Insurance expiry date must be in the format YYYY-MM-DD.",
   // }),
-  drivingLicence: z.string(),
+  drivingLicence: z.string().nullable(),
   // .min(5, {
   //   message: "Driving licence number must be at least 5 characters.",
   // }),
-  drivingLicenceExpiryDate: z.string(),
+  drivingLicenceExpiryDate: z.string().nullable(),
   // .regex(/^\d{4}-\d{2}-\d{2}$/, {
   //   message: "Driving licence expiry date must be in the format YYYY-MM-DD.",
   // }),
-  PCOLicence: z.string(),
+  PCOLicence: z.string().nullable(),
   // .min(5, {
   //   message: "PCO licence number must be at least 5 characters.",
   // }),
-  PCOLicenceExpiryDate: z.string(),
+  PCOLicenceExpiryDate: z.string().nullable(),
   // .regex(/^\d{4}-\d{2}-\d{2}$/, {
   //   message: "PCO licence expiry date must be in the format YYYY-MM-DD.",
   // }),
-  MOTLicence: z.string(),
+  MOTLicence: z.string().nullable().nullable(),
   // .min(5, {
   //   message: "PCO licence number must be at least 5 characters.",
   // }),
-  MOTLicenceExpiryDate: z.string(),
+  MOTLicenceExpiryDate: z.string().nullable(),
   // .regex(/^\d{4}-\d{2}-\d{2}$/, {
   //   message: "PCO licence expiry date must be in the format YYYY-MM-DD.",
   // }),
-  PHVLicence: z.string(),
+  PHVLicence: z.string().nullable().nullable(),
   // .min(5, {
   //   message: "PHV licence number must be at least 5 characters.",
   // }),
-  PHVLicenceExpiryDate: z.string(),
+  PHVLicenceExpiryDate: z.string().nullable(),
   // .regex(/^\d{4}-\d{2}-\d{2}$/, {
   //   message: "PHV licence expiry date must be in the format YYYY-MM-DD.",
   // }),
-  driverActivityStatus: z.enum(["Available", "Unavailable"]),
+  driverActivityStatus: z.enum(["Available", "Unavailable"]).nullable(),
   //    {
   //   message: "Driver activity status must be either 'active' or 'inactive'.",
   // }),
-  driverAddressStatus: z.enum(["Verified", "Not Verified"]),
+  driverAddressStatus: z.enum(["Verified", "Not Verified"]).nullable(),
   //    {
   //   message: "Driver activity status must be either 'active' or 'inactive'.",
   // }),
-  bgsStatus: z.enum(["Checked", "Unchecked"]),
+  bgsStatus: z.enum(["Checked", "Unchecked"]).nullable(),
   //    {
   //   message: "Driver activity status must be either 'active' or 'inactive'.",
   // }),
-  lastCheckedDate: z.string(),
+  lastCheckedDate: z.string().nullable(),
   // .min(5, {
   //   message: "PHV licence number must be at least 5 characters.",
   // }),
-  additionalFiles: z.string(),
+  additionalFiles: z.string().nullable(),
   // .min(2, {
   //   message: "Title details must be at least 2 characters.",
   // }),
-  file: z.string(),
+  file: z.string().nullable(),
   // .min(2, {
   //   message: "file details must be at least 2 characters.",
   // }),
@@ -183,14 +183,9 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
   // const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   function onSubmit(values: FormType) {
+    console.log(values)
     if (data?.generalData) {
       const requestData: IDriverData = {
-        generalData: {
-          ...data?.generalData,
-        },
-        personalData: {
-          ...data?.personalData,
-        },
         otherData: values,
       };
       axios.put(`/api/driver/${data.id}`, requestData).then(
