@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -78,6 +78,8 @@ export interface IGeneralTabProps {
 }
 
 const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
+  const [loading, setLoading] = useState(false); // Loading state to manage button
+
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -100,52 +102,49 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
     }
   }, [data]);
 
-  function onSubmit(values: FormType) {
+  async function onSubmit(values: FormType) {
+    setLoading(true); // Start loading state
+
     const requestData: IDriverData = {
       generalData: {
         displayName: values.displayName,
-        // photo:values.photo,
         uniqueId: values.uniqueId,
         email: values.email,
         password: values.password,
         language: values.language,
         timezone: values.timezone,
         fleetOperator: values.fleetOperator,
-        photo: undefined
+        photo: undefined,
       },
-      isDeleted: false
+      isDeleted: false,
     };
 
-    if (data?.id) {
-      axios.put(`/api/driver/${data.id}`, requestData).then(
-        (response) => {
-          console.log('Updated successful123');
-          onCreate({ ...data, ...requestData });
-          Swal.fire({
-            icon: 'success',
-            title: 'Updated successfully',
-            text: 'The driver data has been updated.',
-          });
-        },
-        (error) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An error occurred while updating the driver data.',
-          });
-          
-        }
-      );
-    } else {
-      axios.post("/api/driver", requestData).then(
-        (response) => {
-          onCreate(response.data);
-    
-        },
-        (error) => {
-          // toast("Create failed");
-        }
-      );
+    try {
+      if (data?.id) {
+        await axios.put(`/api/driver/${data.id}`, requestData);
+        Swal.fire({
+          icon: "success",
+          title: "Updated successfully",
+          text: "The driver data has been updated.",
+        });
+        onCreate({ ...data, ...requestData });
+      } else {
+        const response = await axios.post("/api/driver", requestData);
+        onCreate(response.data);
+        Swal.fire({
+          icon: "success",
+          title: "Created successfully",
+          text: "The driver data has been created.",
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred while processing the data.",
+      });
+    } finally {
+      setLoading(false); // End loading state
     }
   }
 
@@ -372,7 +371,9 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
             </Button>
           </div> */}
           <div className="grid grid-cols-2 gap-4">
-            <Button type="submit">Add</Button>
+          <Button type="submit" disabled={loading}>
+              {loading ? "Updating..." : "Add"} {/* Show Loading text */}
+            </Button>
             <Button variant="outline" type="submit">
               Cancel
             </Button>

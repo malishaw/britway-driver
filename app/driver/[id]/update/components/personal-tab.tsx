@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect,useState  } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -98,6 +98,8 @@ export interface PersonalTabProps {
 }
 
 const GeneralTab: FC<PersonalTabProps> = ({ onCreate, data }) => {
+  const [loading, setLoading] = useState(false); // Loading state to manage button
+
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -121,32 +123,32 @@ const GeneralTab: FC<PersonalTabProps> = ({ onCreate, data }) => {
     },
   });
 
-  function onSubmit(values: FormType) {
+  async function onSubmit(values: FormType) {
     if (data?.generalData) {
+      setLoading(true); // Set loading to true when submitting
       const requestData = {
         personalData: {
           ...values,
           photo: values.photo || undefined,
         }
       };
-      axios.put(`/api/driver/${data.id}`, requestData).then(
-        (response) => {
-          onCreate({...data, ...requestData});
-          Swal.fire({
-            icon: 'success',
-            title: 'Updated successfully',
-            text: 'The driver data has been updated.',
-          });
-        },
-        (error) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An error occurred while updating the driver data.',
-          });
-        }
-      );
-      return;
+      try {
+        const response = await axios.put(`/api/driver/${data.id}`, requestData);
+        onCreate({ ...data, ...requestData }); // Update parent state with new data
+        Swal.fire({
+          icon: 'success',
+          title: 'Updated successfully',
+          text: 'The driver data has been updated.',
+        });
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'An error occurred while updating the driver data.',
+        });
+      } finally {
+        setLoading(false); // Set loading to false after operation completes
+      }
     }
   }
   useEffect(() => {
@@ -419,7 +421,9 @@ const GeneralTab: FC<PersonalTabProps> = ({ onCreate, data }) => {
           />
 
           <div className="grid  grid-cols-2  gap-4">
-            <Button type="submit">Add</Button>
+          <Button type="submit" disabled={loading}>
+              {loading ? "Updating..." : "Add"}
+            </Button>
             <Button variant="outline" type="submit">
               Cancel
             </Button>
