@@ -13,7 +13,7 @@ const defaultDetailItemProps: DetailItemProps = {
 const DetailItem: React.FC<DetailItemProps> = ({ label, value }) => {
   return (
     <div className="flex items-baseline justify-start w-full py-2 border-b">
-      <span className="w-1/2">{label}</span>
+      <span className="w-1/2 text-gray-500">{label}</span>
       <span className="w-1/2">
         {label.toLowerCase().includes("status") ? (
           <span >{value}</span>

@@ -199,9 +199,9 @@ export default function YourPage() {
         </div>
 
         {/* Driver Details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-7 ">
           {/* Left Side */}
-          <div>
+          <div >
             {mapDriverData()
               .slice(0, Math.ceil(mapDriverData().length / 2))
               .map((detail, index) => (

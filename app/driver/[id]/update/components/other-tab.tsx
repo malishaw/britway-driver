@@ -80,15 +80,23 @@ const formSchema = z.object({
   // .regex(/^\d{4}-\d{2}-\d{2}$/, {
   //   message: "PHV licence expiry date must be in the format YYYY-MM-DD.",
   // }),
-  driverActivityStatus: z.enum(["Available", "Unavailable"]).nullable(),
+
+  driverActivityStatus: z.string(),
+
+  // driverActivityStatus: z.enum(["Available", "Unavailable"]).nullable(),
   //    {
   //   message: "Driver activity status must be either 'active' or 'inactive'.",
   // }),
-  driverAddressStatus: z.enum(["Verified", "Not Verified"]).nullable(),
+  driverAddressStatus: z.string(),
+
+  // driverAddressStatus: z.enum(["Verified", "Not Verified"]).nullable(),
   //    {
   //   message: "Driver activity status must be either 'active' or 'inactive'.",
   // }),
-  bgsStatus: z.enum(["Checked", "Unchecked"]).nullable(),
+
+  bgsStatus: z.string(),
+  // bgsStatus: z.enum(["Checked", "Unchecked"]).default("Unchecked"),
+  // bgsStatus: z.enum(["Checked", "Unchecked"]).nullable(),
   //    {
   //   message: "Driver activity status must be either 'active' or 'inactive'.",
   // }),
@@ -185,8 +193,28 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
   function onSubmit(values: FormType) {
     console.log(values)
     if (data?.generalData) {
-      const requestData: IDriverData = {
-        otherData: values,
+      const requestData = {
+        otherData: {
+          ...values,
+          nationalInsuranceNumber: values.nationalInsuranceNumber || '',
+          bankAccountDetails: values.bankAccountDetails || '',
+          insurance: values.insurance || '',
+          insuranceExpiryDate: values.insuranceExpiryDate || '',
+          drivingLicence: values.drivingLicence || '',
+          drivingLicenceExpiryDate: values.drivingLicenceExpiryDate || '',
+          PCOLicence: values.PCOLicence || '',
+          PCOLicenceExpiryDate: values.PCOLicenceExpiryDate || '',
+          MOTLicence: values.MOTLicence || '',
+          MOTLicenceExpiryDate: values.MOTLicenceExpiryDate || '',
+          PHVLicence: values.PHVLicence || '',
+          PHVLicenceExpiryDate: values.PHVLicenceExpiryDate || '',
+          driverActivityStatus: values.driverActivityStatus as "Available" | "Unavailable" | undefined,
+          driverAddressStatus: values.driverAddressStatus as "Verified" | "Not Verified" | undefined,
+          bgsStatus: values.bgsStatus as "Checked" | "Unchecked" | undefined,
+          lastCheckedDate: values.lastCheckedDate || '',
+          additionalFiles: values.additionalFiles || '',
+          file: values.file || '',
+        }
       };
       axios.put(`/api/driver/${data.id}`, requestData).then(
         (response) => {
@@ -245,7 +273,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
                 <FormItem>
                   <FormLabel>National Insurance Number</FormLabel>
                   <FormControl>
-                    <Input placeholder="National Insurance Number" {...field} />
+                    <Input placeholder="National Insurance Number" {...field} value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -258,7 +286,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
                 <FormItem>
                   <FormLabel>Bank Account Details</FormLabel>
                   <FormControl>
-                    <Input placeholder="Bank Account Details" {...field} />
+                    <Input placeholder="Bank Account Details" {...field}  value={field.value ?? ''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -323,7 +351,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       <FormItem>
         <FormLabel>Number</FormLabel>
         <FormControl>
-          <Input placeholder="Insurance" {...field} />
+          <Input placeholder="Insurance" {...field}  value={field.value ?? ''} />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -339,7 +367,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
           <Input
             type="date"
             placeholder="Insurance Expiry Date"
-            {...field}
+            {...field}  value={field.value ?? ''} 
           />
         </FormControl>
         <FormMessage />
@@ -450,7 +478,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       <FormItem>
         <FormLabel>Driving Licence Number</FormLabel>
         <FormControl>
-          <Input placeholder="Driving Licence" {...field} />
+          <Input placeholder="Driving Licence" {...field}  value={field.value ?? ''} />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -466,7 +494,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
           <Input
             type="date"
             placeholder="Driving Licence Expiry Date"
-            {...field}
+            {...field}  value={field.value ?? ''} 
           />
         </FormControl>
         <FormMessage />
@@ -580,7 +608,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       <FormItem>
         <FormLabel>PCO Licence Number</FormLabel>
         <FormControl>
-          <Input placeholder="PCO Licence" {...field} />
+          <Input placeholder="PCO Licence" {...field}  value={field.value ?? ''} />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -596,7 +624,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
           <Input
             type="date"
             placeholder="PCO Licence Expiry Date"
-            {...field}
+            {...field}  value={field.value ?? ''} 
           />
         </FormControl>
         <FormMessage />
@@ -708,7 +736,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       <FormItem>
         <FormLabel>MOT</FormLabel>
         <FormControl>
-          <Input placeholder="MOT " {...field} />
+          <Input placeholder="MOT " {...field}  value={field.value ?? ''} />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -724,7 +752,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
           <Input
             type="date"
             placeholder="MOT Expiry Date"
-            {...field}
+            {...field}  value={field.value ?? ''} 
           />
         </FormControl>
         <FormMessage />
@@ -837,7 +865,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
       <FormItem>
         <FormLabel>PHV Licence Number</FormLabel>
         <FormControl>
-          <Input placeholder="PHV Licence" {...field} />
+          <Input placeholder="PHV Licence" {...field}  value={field.value ?? ''} />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -853,7 +881,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
           <Input
             type="date"
             placeholder="PHV Licence Expiry Date"
-            {...field}
+            {...field}  value={field.value ?? ''} 
           />
         </FormControl>
         <FormMessage />
@@ -945,12 +973,13 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
                 <FormLabel>Driver Activity Status</FormLabel>
 
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
+                defaultValue={field.value} // Use undefined instead of null
+                onValueChange={field.onChange} // Handle value change and update the form state
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a correct status" />
+                    <SelectValue>{field.value}</SelectValue>
+                    {/* <SelectValue placeholder="Select a correct status" /> */}
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -970,39 +999,41 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Driver Licence Address Status</FormLabel>
-                <div style={{ position: "relative" }}>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value} // Ensure the Select component takes full width
+                {/* <div style={{ position: "relative" }}> */}
+                <Select
+                defaultValue={field.value}
+                onValueChange={field.onChange}
+                    
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a correct status" />
-                      </SelectTrigger>
+                      {/* <SelectValue placeholder="Select a correct status" />         */}
+                      <SelectValue>{field.value}</SelectValue>
+                                  </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="Verified">Verified</SelectItem>
                       <SelectItem value="Not Verified">Not Verified</SelectItem>
                     </SelectContent>
                   </Select>
-                  {field.value === "Verified" && (
+
+                   {field.value === "Verified" && (
                     <CheckIcon
                       style={{
-                        position: "relative", // Changed from "relative" to "absolute"
-                        top: "-4.2rem", // Adjust this value as needed
+                        position: "relative",
+                        top: "-4.2rem",
                         float: "inline-end",
                         color: "green",
                         width: "1.5rem",
                         height: "1.5rem",
-                      }}
+                      }} 
                     />
                   )}
-                </div>
+                {/* </div>  */}
                 <FormControl></FormControl>
                 <FormMessage />
               </FormItem>
-            )}
-          />
+            )}          />
 
 
 
@@ -1015,19 +1046,21 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
                 <FormLabel>DBS Check Status</FormLabel>
 
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a correct status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="Checked">Checked</SelectItem>
-                    <SelectItem value="Unchecked">Unchecked</SelectItem>
-                  </SelectContent>
-                </Select>
+  defaultValue={field.value} // Set value to what's stored in the database
+  onValueChange={(value) => field.onChange(value)} // Update the value when user selects
+>
+  <FormControl>
+    <SelectTrigger>
+    <SelectValue>{field.value}</SelectValue>
+    {/* <SelectValue placeholder="Select a correct status" /> */}
+        </SelectTrigger>
+  </FormControl>
+  <SelectContent>
+    <SelectItem value="Checked">Checked</SelectItem>
+    <SelectItem value="Unchecked">Unchecked</SelectItem>
+  </SelectContent>
+</Select>
+
 
                 <FormControl></FormControl>
                 <FormMessage />
@@ -1044,7 +1077,7 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
                     <Input
                       type="date"
                       placeholder="Last Checked Date"
-                      {...field}
+                      {...field}  value={field.value ?? ''} 
                     />
                   </FormControl>
                   <FormMessage />
