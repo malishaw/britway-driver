@@ -143,6 +143,8 @@ export interface IOtherTabProps {
   data: IDriverData | null;
 }
 const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
+  const [loading, setLoading] = useState(false);
+
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -191,6 +193,9 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
   // const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   function onSubmit(values: FormType) {
+    console.log(values);
+    setLoading(true); // Start loading state
+
     console.log(values)
     if (data?.generalData) {
       const requestData = {
@@ -232,7 +237,9 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
             text: 'An error occurred while updating the driver data.',
           });
         }
-      );
+      ).finally(() => {
+        setLoading(false);
+      });
       return;
     }
   }
@@ -1128,7 +1135,9 @@ const OtherTab: FC<IOtherTabProps> = ({ onCreate, data }) => {
             </Button>
           </div> */}
           <div className="grid grid-cols-2 gap-4">
-            <Button type="submit">Add</Button>
+          <Button type="submit" disabled={loading}>
+              {loading ? "Updating..." : "Add"} {/* Show Loading text */}
+            </Button>
             <Button variant="outline" type="submit">
               Cancel
             </Button>
