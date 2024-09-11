@@ -32,6 +32,9 @@ import { IDriverData } from "../typings/interfaces/driverData";
 import ConfirmationDialog from "./shared/confirmation-dialog/ConfirmationDialog";
 import { useCustomNavigation } from "../hooks";
 
+import Spinner  from "@/components/ui/spinner"; // Import a Spinner component
+
+
 
 export type Driver = {
   id: string;
@@ -100,6 +103,8 @@ export const columns: ColumnDef<Driver>[] = [
 ];
 
 export function DriversTable() {
+  const [isLoading, setIsLoading] = React.useState(true); // New state for loading
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const {navigate} = useCustomNavigation();
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -170,6 +175,8 @@ export function DriversTable() {
 
 
   const fetchDrivers = () => {
+    setIsLoading(true); // Set loading to true before fetching
+
     try {
       axios.get("/api/driver").then((response) => {
         const preparedData = response.data
@@ -183,9 +190,13 @@ export function DriversTable() {
           }))
           .reverse();
         setData(preparedData);
+        setIsLoading(false); // Set loading to false after data is fetched
+
       });
     } catch (error) {
       console.error(error);
+      setIsLoading(false); // Set loading to false if there's an error
+
     }
   };
   
@@ -226,6 +237,11 @@ export function DriversTable() {
         />
       </div>
       <div className="rounded-md border">
+      {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <Spinner size="lg" />
+          </div>
+        ) : (
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -273,7 +289,7 @@ export function DriversTable() {
               </TableRow>
             )}
           </TableBody>
-        </Table>
+        </Table>)}
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="space-x-2">

@@ -346,19 +346,20 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
                 <FormLabel>Fleet Operator</FormLabel>
 
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a correct fleet operator" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="Unassigned">Unassigned</SelectItem>
-                    <SelectItem value="Assigned">Assigned</SelectItem>
-                  </SelectContent>
-                </Select>
+  value={field.value} // Bind to field.value to display the saved value
+  onValueChange={field.onChange} // Handle value change and update the form state
+>
+  <FormControl>
+    <SelectTrigger>
+      <SelectValue placeholder="Select a correct fleet operator" />
+    </SelectTrigger>
+  </FormControl>
+  <SelectContent>
+    <SelectItem value="Unassigned">Unassigned</SelectItem>
+    <SelectItem value="Assigned">Assigned</SelectItem>
+  </SelectContent>
+</Select>
+
 
                 <FormControl></FormControl>
                 <FormMessage />

@@ -39,6 +39,8 @@ import { Booking } from "../typings";
 import { GetServerSideProps } from "next";
 import DriverCell from "./DriverCell";
 
+import Spinner  from "@/components/ui/spinner"; // Import a Spinner component
+
 declare module "@tanstack/table-core" {
   interface FilterFns {
     dateBetweenFilterFn: FilterFn<unknown>;
@@ -67,6 +69,8 @@ const dateBetweenFilterFn: FilterFn<any> = (row, columnId, value) => {
 };
 
 export function BookingTable({ data = [] }: { data: Booking[] }) {
+  const [loading, setLoading] = React.useState(true);
+
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "journeyDate", desc: true },
   ]);
@@ -175,6 +179,19 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
         dateTo ? format(dateTo, "dd/MM/yyyy") : "",
       ]);
   }, [dateFrom, dateTo]);
+
+  React.useEffect(() => {
+    // Simulate loading data
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <div className="overflow-auto">
