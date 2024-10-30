@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
   FilterFn,
-  FilterFns
+  FilterFns,
 } from "@tanstack/react-table";
 import { ArrowUpDown, PenIcon, TrashIcon, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,9 +32,7 @@ import { IDriverData } from "../typings/interfaces/driverData";
 import ConfirmationDialog from "./shared/confirmation-dialog/ConfirmationDialog";
 import { useCustomNavigation } from "../hooks";
 
-import Spinner  from "@/components/ui/spinner"; // Import a Spinner component
-
-
+import Spinner from "@/components/ui/spinner"; // Import a Spinner component
 
 export type Driver = {
   id: string;
@@ -53,7 +51,7 @@ export const columns: ColumnDef<Driver>[] = [
     cell: ({ row }) => {
       const photo = row.original.photo;
       const name = row.original.name;
-  
+
       return (
         <Avatar>
           {photo ? (
@@ -71,7 +69,7 @@ export const columns: ColumnDef<Driver>[] = [
       );
     },
   },
-  
+
   {
     accessorKey: "name",
     header: "Name",
@@ -104,9 +102,10 @@ export const columns: ColumnDef<Driver>[] = [
 
 export function DriversTable() {
   const [isLoading, setIsLoading] = React.useState(true); // New state for loading
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const {navigate} = useCustomNavigation();
+  const { navigate } = useCustomNavigation();
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -118,20 +117,20 @@ export function DriversTable() {
     null
   );
 
-  const handleOnClickView = (row:Driver) => {
+  const handleOnClickView = (row: Driver) => {
     navigate(`/driver-details/${row.id}`);
-  }
+  };
 
-  const handleOnClickEdit = (row:Driver) => {
+  const handleOnClickEdit = (row: Driver) => {
     navigate(`/driver/${row.id}/update`);
-  }
+  };
 
-  const handleOnClickDelete = (row:Driver) => {
+  const handleOnClickDelete = (row: Driver) => {
     setSelectedDriver(row);
-  }
+  };
 
   const defaultFilterFns: Partial<Record<keyof FilterFns, FilterFn<any>>> = {
-    dateBetweenFilterFn: () => true, 
+    dateBetweenFilterFn: () => true,
   };
 
   const table = useReactTable({
@@ -144,9 +143,24 @@ export function DriversTable() {
         cell: ({ row }) => {
           return (
             <div className="flex gap-2">
-              <Eye onClick={() => handleOnClickView(row.original)} />
-              <PenIcon onClick={() => handleOnClickEdit(row.original)} />
-              <TrashIcon onClick={() => handleOnClickDelete(row.original)} />
+              <Button size={"icon"} className="w-8 h-8" variant={"outline"}>
+                <Eye
+                  className="cursor-pointer size-4"
+                  onClick={() => handleOnClickView(row.original)}
+                />
+              </Button>
+              <Button size={"icon"} className="w-8 h-8" variant={"outline"}>
+                <PenIcon
+                  className="cursor-pointer size-4"
+                  onClick={() => handleOnClickEdit(row.original)}
+                />
+              </Button>
+              <Button size={"icon"} className="w-8 h-8" variant={"outline"}>
+                <TrashIcon
+                  className="cursor-pointer size-4"
+                  onClick={() => handleOnClickDelete(row.original)}
+                />
+              </Button>
             </div>
           );
         },
@@ -173,7 +187,6 @@ export function DriversTable() {
     fetchDrivers();
   }, []);
 
-
   const fetchDrivers = () => {
     setIsLoading(true); // Set loading to true before fetching
 
@@ -191,31 +204,31 @@ export function DriversTable() {
           .reverse();
         setData(preparedData);
         setIsLoading(false); // Set loading to false after data is fetched
-
       });
     } catch (error) {
       console.error(error);
       setIsLoading(false); // Set loading to false if there's an error
-
     }
   };
-  
-  
 
   const handleDelete = () => {
     try {
+      setIsDeleting(true);
+
       axios.delete(`/api/driver/${selectedDriver?.id}`).then((response) => {
         fetchDrivers();
         handleOnCancelDelete();
       });
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   const handleOnCancelDelete = () => {
     setSelectedDriver(null);
-  }
+  };
 
   return (
     <div className="w-full">
@@ -224,8 +237,10 @@ export function DriversTable() {
         description={"Do you want to delete this driver?"}
         onConfirm={handleDelete}
         onDecline={handleOnCancelDelete}
+        isLoading={false}
         open={selectedDriver !== null}
       />
+
       <div className="flex items-center pb-4">
         <Input
           placeholder="Filter emails..."
@@ -237,59 +252,60 @@ export function DriversTable() {
         />
       </div>
       <div className="rounded-md border">
-      {isLoading ? (
+        {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <Spinner size="lg" />
           </div>
         ) : (
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>)}
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="space-x-2">
