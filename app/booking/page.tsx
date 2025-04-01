@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import axios from "axios";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 import { Button } from "@/components/ui/button";
 import { useExcelData } from "../hooks";
@@ -94,7 +94,6 @@ export default function Booking() {
       .post("/api/booking", newBookings)
       .then((response) => {
         console.log("Post response:", response);
-        console.log("response.data structure:", response.data);
         Swal.fire({
           icon: "success",
           title: "Successfully",
@@ -119,20 +118,67 @@ export default function Booking() {
       });
   };
 
+  const deleteAllBookings = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This will permanently delete all bookings!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete all!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete("/api/booking") // Adjust endpoint as per backend implementation
+          .then((response) => {
+            console.log("All bookings deleted:", response.data);
+            Swal.fire({
+              icon: "success",
+              title: "Deleted!",
+              text: "All bookings have been deleted.",
+            });
+            setBookings([]); // Reset state to empty array
+          })
+          .catch((error) => {
+            console.error("Error deleting bookings:", error);
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Failed to delete bookings.",
+            });
+          });
+      }
+    });
+  };
+
   return (
-    <div className="flex flex-1 flex-col gap-4 w-screen lg:w-80">
-      <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold md:text-2xl">Booking</h1>
+    <div className="flex flex-1 flex-col gap-6 w-screen lg:w-80 bg-gray-50">
+      <div className="flex items-center justify-between p-4 bg-white shadow-md rounded-lg">
+        <h1 className="text-xl font-semibold text-gray-900">Booking</h1>
 
         <div className="flex gap-5">
           <Button
             disabled={isSaveDisabled || data?.length === 0}
             onClick={createBookings}
+            className="bg-blue-600 text-white hover:bg-blue-700"
           >
             Save
           </Button>
 
-          <Button onClick={() => fileInput.current?.click()}>Import</Button>
+          <Button
+            onClick={deleteAllBookings}
+            className="bg-red-600 text-white hover:bg-red-700"
+          >
+            Delete All
+          </Button>
+
+          <Button
+            onClick={() => fileInput.current?.click()}
+            className="bg-green-600 text-white hover:bg-green-700"
+          >
+            Import
+          </Button>
           <input
             ref={fileInput}
             type="file"
@@ -142,10 +188,7 @@ export default function Booking() {
           />
         </div>
       </div>
-      <div
-        className="flex flex-1 p-4 rounded-lg border border-dashed shadow-sm"
-        x-chunk="dashboard-02-chunk-1"
-      >
+      <div className="flex flex-1 p-4 rounded-lg bg-white shadow-sm">
         <BookingTable data={bookings} />
       </div>
     </div>

@@ -258,7 +258,7 @@ export function DriversTable() {
           </div>
         ) : (
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-gray-200">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
