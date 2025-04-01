@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -30,6 +30,7 @@ import { IDriverGeneralData } from "@/app/typings";
 import { IDriverData } from "@/app/typings/interfaces/driverData";
 import { error } from "console";
 import { UploadDropzone } from "@/lib/uploadthing";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   displayName: z.string().min(2, {
@@ -76,6 +77,8 @@ export interface IGeneralTabProps {
 }
 
 const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
+  const [loading, setLoading] = useState<boolean>(false);
+
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -99,6 +102,8 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
   }, [data]);
 
   function onSubmit(values: FormType) {
+    setLoading(true);
+
     const requestData: IDriverData = {
       generalData: {
         displayName: values.displayName,
@@ -109,7 +114,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
         language: values.language,
         timezone: values.timezone,
         fleetOperator: values.fleetOperator,
-        photo: undefined
+        photo: undefined,
       },
       isDeleted: false,
       personalData: data?.personalData,
@@ -120,22 +125,25 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
       axios.put(`/api/driver/${data.id}`, requestData).then(
         (response) => {
           console.log("Updated successful>>>>");
-          onCreate({...response.data, ...requestData});
+          onCreate({ ...response.data, ...requestData });
+          setLoading(false);
         },
         (error) => {
           console.log(error);
+          setLoading(false);
         }
       );
     } else {
       axios.post("/api/driver", requestData).then(
         (response) => {
           console.log("Create successful>>>>");
-          onCreate({...response.data, ...requestData});
+          onCreate({ ...response.data, ...requestData });
           Swal.fire({
             icon: "success",
             title: "Created successfully",
             text: "The driver's general data has been created.",
           });
+          setLoading(false);
         },
         (error) => {
           Swal.fire({
@@ -144,6 +152,7 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
             text: "An error occurred while creating the driver data.",
           });
           console.log(error);
+          setLoading(false);
         }
       );
     }
@@ -405,7 +414,10 @@ const GeneralTab: React.FC<IGeneralTabProps> = ({ onCreate, data }) => {
             </Button>
           </div> */}
           <div className="grid grid-cols-2 gap-4">
-            <Button type="submit">Add</Button>
+            <Button type="submit" disabled={loading}>
+              {loading && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+              Add
+            </Button>
             <Button variant="outline" type="submit">
               Cancel
             </Button>

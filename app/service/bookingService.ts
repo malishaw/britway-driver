@@ -10,3 +10,7 @@ export const createBookings = (bookings: any) => {
     data: bookings,
   });
 };
+
+export const deleteAllBookings = () => {
+  return prisma.booking.deleteMany();
+};

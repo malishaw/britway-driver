@@ -107,6 +107,7 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
     // { accessorKey: "vehicle", header: "Vehicle" },
     // { accessorKey: "vehicleType", header: "Vehicle Type" },
     // { accessorKey: "discount", header: "Discount" },
+    { accessorKey: "fleetOperator", header: "Fleet operator" },
     { accessorKey: "passengerName", header: "Passenger Name" },
     // { accessorKey: "flightNumber", header: "Flight Number" },
     // { accessorKey: "flightLandingTime", header: "Flight Landing Time" },
@@ -147,6 +148,7 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
         <span className="whitespace-nowrap">{`${getValue()}`}</span>
       ),
     },
+    { accessorKey: "action", header: "Action" },
   ];
 
   const table = useReactTable({
@@ -261,12 +263,12 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
       </div>
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-gray-200 ">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="px-4">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
