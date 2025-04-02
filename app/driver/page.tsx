@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 export default function Driver() {
   return (
     <div className="flex flex-1 flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold md:text-2xl">Drivers</h1>
+      <div className="flex items-center justify-between p-4 bg-white shadow-md rounded-lg">
+        <h1 className="text-lg font-semibold md:text-2xl text-gray-900">Drivers</h1>
         <Link href="driver/create">
           <Button>Add New</Button>
         </Link>

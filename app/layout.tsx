@@ -56,14 +56,14 @@ export default function RootLayout({
               <div className="mt-auto p-4">
                 <Card x-chunk="dashboard-02-chunk-0">
                   <CardContent className="p-2 text-center">
-                    <span>v 1.0.0</span>
+                    <span>v 1.0.2</span>
                   </CardContent>
                 </Card>
               </div>
             </div>
           </div>
           <div className="flex flex-col">
-            <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+            <header className="flex items-center gap-4 border-b bg-muted/40 px-4 lg:px-6">
               <Sheet>
                 <SheetTrigger asChild>
                   <Button
@@ -102,7 +102,7 @@ export default function RootLayout({
                   <div className="mt-auto">
                     <Card x-chunk="dashboard-02-chunk-0">
                       <CardContent className="p-2 text-center">
-                        <span>v 1.0.0</span>
+                        <span>v 1.0.2</span>
                       </CardContent>
                     </Card>
                   </div>
