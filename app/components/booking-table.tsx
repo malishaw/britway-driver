@@ -16,8 +16,9 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { format, isWithinInterval, parse } from "date-fns";
+import { format, addDays, parse, isValid } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
+import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -35,8 +36,10 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { Booking } from "../typings";
+import { GetServerSideProps } from "next";
 import DriverCell from "./DriverCell";
-import Spinner from "@/components/ui/spinner";
+
+import Spinner from "@/components/ui/spinner"; // Import a Spinner component
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
@@ -44,59 +47,72 @@ declare module "@tanstack/table-core" {
   }
 }
 
-// Improved date filter function
-const dateBetweenFilterFn: FilterFn<any> = (row, columnId, filterValue) => {
-  // Early return if no filter values
-  if (!filterValue || !Array.isArray(filterValue) || !filterValue[0]) {
-    return true;
-  }
-
-  const dateStr = row.getValue(columnId) as string;
-  if (!dateStr) return false;
-
-  try {
-    // Parse the date string from DD/MM/YYYY format
-    const rowDate = parse(dateStr, "dd/MM/yyyy", new Date());
-    
-    // Get start and end dates from filter value
-    const startDateStr = filterValue[0];
-    const endDateStr = filterValue[1];
-    
-    if (startDateStr && endDateStr) {
-      const startDate = parse(startDateStr, "dd/MM/yyyy", new Date());
-      const endDate = parse(endDateStr, "dd/MM/yyyy", new Date());
-      
-      // Add one day to end date to make it inclusive
-      endDate.setDate(endDate.getDate() + 1);
-      
-      return isWithinInterval(rowDate, { start: startDate, end: endDate });
-    } else if (startDateStr) {
-      const startDate = parse(startDateStr, "dd/MM/yyyy", new Date());
-      return rowDate >= startDate;
-    } else if (endDateStr) {
-      const endDate = parse(endDateStr, "dd/MM/yyyy", new Date());
-      // Add one day to end date to make it inclusive
-      endDate.setDate(endDate.getDate() + 1);
-      return rowDate <= endDate;
+// Updated filter function to handle various date formats
+const dateBetweenFilterFn: FilterFn<any> = (row, columnId, value) => {
+  const dateTimeString = row.getValue(columnId) as string;
+  if (!dateTimeString) return false; // Skip if no date
+  
+  // Try parsing the date in multiple formats
+  let rowDate;
+  
+  // First attempt: MM/DD/YYYY format (like 3/2/2025)
+  const formatAttempts = [
+    // American format (month first)
+    "M/d/yyyy HH:mm",
+    "MM/dd/yyyy HH:mm",
+    // European format (day first)
+    "dd/MM/yyyy HH:mm",
+    // Try without time component
+    "M/d/yyyy",
+    "MM/dd/yyyy",
+    "dd/MM/yyyy"
+  ];
+  
+  for (const formatString of formatAttempts) {
+    try {
+      const parsedDate = parse(dateTimeString, formatString, new Date());
+      if (isValid(parsedDate)) {
+        rowDate = parsedDate;
+        break;
+      }
+    } catch (e) {
+      // Continue trying other formats
     }
-    
-    return true;
-  } catch (error) {
-    console.error("Error filtering date:", error);
-    return true;
   }
+  
+  if (!rowDate) {
+    console.warn(`Could not parse date: ${dateTimeString}`);
+    return false;
+  }
+
+  // Get start and end dates
+  const [start, end] = value;
+  
+  if (start && end) {
+    return rowDate >= start && rowDate <= end;
+  }
+  if (start) {
+    return rowDate >= start;
+  }
+  if (end) {
+    return rowDate <= end;
+  }
+  return true;
 };
 
 export function BookingTable({ data = [] }: { data: Booking[] }) {
   const [loading, setLoading] = React.useState(true);
+  const tableContainerRef = React.useRef<HTMLDivElement>(null);
 
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "journeyDate", desc: true },
   ]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [dateFrom, setDateFrom] = React.useState<Date | undefined>();
-  const [dateTo, setDateTo] = React.useState<Date | undefined>();
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>(undefined);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
   const columns: ColumnDef<Booking>[] = [
@@ -104,6 +120,35 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
       accessorKey: "journeyDate",
       header: "Journey Date",
       filterFn: "dateBetweenFilterFn",
+      cell: ({ getValue }) => {
+        // Format the date consistently for display
+        const dateTimeString = getValue() as string;
+        let displayDate = dateTimeString;
+        
+        // Try to parse and format consistently
+        try {
+          const formatAttempts = [
+            "M/d/yyyy HH:mm",
+            "MM/dd/yyyy HH:mm",
+            "dd/MM/yyyy HH:mm",
+            "M/d/yyyy",
+            "MM/dd/yyyy", 
+            "dd/MM/yyyy"
+          ];
+          
+          for (const formatString of formatAttempts) {
+            const parsedDate = parse(dateTimeString, formatString, new Date());
+            if (isValid(parsedDate)) {
+              displayDate = format(parsedDate, "dd/MM/yyyy HH:mm");
+              break;
+            }
+          }
+        } catch (e) {
+          // Keep original if parsing fails
+        }
+        
+        return <span>{displayDate}</span>;
+      }
     },
     { accessorKey: "refId", header: "Reference ID" },
     {
@@ -164,25 +209,23 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
       rowSelection,
     },
     filterFns: {
-      dateBetweenFilterFn,
+      dateBetweenFilterFn: dateBetweenFilterFn,
+    },
+    initialState: {
+      pagination: {
+        pageSize: 25, // Default page size
+      },
     },
   });
 
-  // Update date filter whenever dateFrom or dateTo changes
   React.useEffect(() => {
-    // Format dates for the filter
-    const formattedDateFrom = dateFrom ? format(dateFrom, "dd/MM/yyyy") : "";
-    const formattedDateTo = dateTo ? format(dateTo, "dd/MM/yyyy") : "";
-    
-    // Apply filter with timeout to avoid too frequent updates
-    const journeyDateColumn = table.getColumn("journeyDate");
-    if (journeyDateColumn) {
-      journeyDateColumn.setFilterValue([formattedDateFrom, formattedDateTo]);
-    }
-    
-    // Log for debugging
-    console.log("Date filter updated:", formattedDateFrom, formattedDateTo);
-  }, [dateFrom, dateTo, table]);
+    table
+      .getColumn("journeyDate")
+      ?.setFilterValue([
+        dateRange?.from || null,
+        dateRange?.to || null
+      ]);
+  }, [dateRange, table]);
 
   React.useEffect(() => {
     // Simulate loading data
@@ -199,63 +242,48 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
 
   return (
     <div className="w-full">
-      {/* Filter controls */}
+      {/* Filter controls - full width without horizontal scroll */}
       <div className="flex flex-wrap items-center gap-4 pb-4">
         <Popover>
           <PopoverTrigger asChild>
             <Button
               variant={"outline"}
               className={cn(
-                "w-[240px] justify-start text-left font-normal",
-                !dateFrom && "text-muted-foreground"
+                "w-[300px] justify-start text-left font-normal",
+                !dateRange?.from && "text-muted-foreground"
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {dateFrom ? (
-                format(dateFrom, "PPP")
+              {dateRange?.from ? (
+                dateRange.to ? (
+                  <>
+                    {format(dateRange.from, "dd/MM/yyyy")} -{" "}
+                    {format(dateRange.to, "dd/MM/yyyy")}
+                  </>
+                ) : (
+                  format(dateRange.from, "dd/MM/yyyy")
+                )
               ) : (
-                <span>Pick a Start Date</span>
+                <span>Filter by date range</span>
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
+          <PopoverContent className="w-auto p-0" align="start">
             <Calendar
-              mode="single"
-              selected={dateFrom}
-              onSelect={setDateFrom}
               initialFocus
-            />
-          </PopoverContent>
-        </Popover>
-
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-[240px] justify-start text-left font-normal",
-                !dateTo && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {dateTo ? format(dateTo, "PPP") : <span>Pick an End Date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={dateTo}
-              onSelect={setDateTo}
-              initialFocus
+              mode="range"
+              selected={dateRange}
+              onSelect={setDateRange}
+              numberOfMonths={2}
             />
           </PopoverContent>
         </Popover>
 
         <Button
           onClick={() => {
-            setDateFrom(undefined);
-            setDateTo(undefined);
+            setDateRange(undefined);
           }}
+          variant="outline"
         >
           Clear Filter
         </Button>
@@ -265,93 +293,128 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
         </p>
       </div>
 
-      {/* Table container */}
-      <div className="relative border rounded-md w-full overflow-auto max-h-[70vh]">
-        <Table>
-          <TableHeader className="sticky top-0 bg-gray-200 z-10">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead 
-                    key={header.id} 
-                    className="px-4 py-3 sticky top-0 bg-gray-200"
-                    style={{
-                      whiteSpace: 'nowrap'
-                    }}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell 
-                      key={cell.id} 
-                      className="px-4 py-3"
+      {/* Table container with contained horizontal and vertical scrolling */}
+      <div 
+        ref={tableContainerRef}
+        className="relative border rounded-md w-full"
+      >
+        <div className="overflow-auto max-h-[70vh]" style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#cbd5e0 #f7fafc'
+        }}>
+          <Table>
+            <TableHeader className="sticky top-0 z-20">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id} className="bg-gray-200">
+                  {headerGroup.headers.map((header) => (
+                    <TableHead 
+                      key={header.id}
+                      className="px-4 py-3 font-medium text-sm sticky top-0 z-20 bg-gray-200 shadow-sm"
                       style={{
                         whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        maxWidth: '300px'
+                        position: 'sticky',
+                        top: 0,
+                        backgroundColor: 'rgb(229, 231, 235)', /* Matching bg-gray-200 */
+                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
                       }}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className="hover:bg-gray-50"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell 
+                        key={cell.id}
+                        className="px-4 py-3"
+                        style={{
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          maxWidth: '300px'
+                        }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
-      {/* Pagination controls */}
+      {/* Pagination controls - full width without horizontal scroll */}
       <div className="w-full flex items-center justify-between space-x-2 py-4">
-        <div className="text-sm text-gray-700">
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+        <div className="flex-1 text-sm text-muted-foreground">
+          Showing {table.getState().pagination.pageSize * table.getState().pagination.pageIndex + 1} to{" "}
+          {Math.min(
+            table.getState().pagination.pageSize * (table.getState().pagination.pageIndex + 1),
+            table.getFilteredRowModel().rows.length
+          )}{" "}
+          of {table.getFilteredRowModel().rows.length} entries
         </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+        
+        <div className="flex items-center space-x-6">
+          <select
+            value={table.getState().pagination.pageSize}
+            onChange={e => {
+              table.setPageSize(Number(e.target.value));
+            }}
+            className="border p-1 rounded text-sm"
           >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+            {[10, 25, 50, 100].map(pageSize => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </select>
+          
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </div>
     </div>
