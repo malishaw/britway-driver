@@ -156,7 +156,7 @@ export default function Booking() {
   return (
     <div className="flex flex-1 flex-col gap-6 w-screen lg:w-80 bg-gray-50">
       <div className="flex items-center justify-between p-4 bg-white shadow-md rounded-lg">
-        <h1 className="text-xl font-semibold text-gray-900">Booking</h1>
+        <h1 className="text-lg font-semibold md:text-2xl text-gray-900">Booking</h1>
 
         <div className="flex gap-5">
         <Button

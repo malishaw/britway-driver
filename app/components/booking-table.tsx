@@ -294,28 +294,22 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
       </div>
 
       {/* Table container with contained horizontal and vertical scrolling */}
-      <div 
-        ref={tableContainerRef}
-        className="relative border rounded-md w-full"
-      >
-        <div className="overflow-auto max-h-[70vh]" style={{
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#cbd5e0 #f7fafc'
-        }}>
+      <div ref={tableContainerRef} className="relative border rounded-md w-full">
+        <div className="overflow-auto" style={{ maxHeight: 'calc(7 * 3.5rem)' }}> {/* 8 rows with a row height of 3.5rem */}
           <Table>
             <TableHeader className="sticky top-0 z-20">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="bg-gray-200">
                   {headerGroup.headers.map((header) => (
-                    <TableHead 
+                    <TableHead
                       key={header.id}
                       className="px-4 py-3 font-medium text-sm sticky top-0 z-20 bg-gray-200 shadow-sm"
                       style={{
                         whiteSpace: 'nowrap',
                         position: 'sticky',
                         top: 0,
-                        backgroundColor: 'rgb(229, 231, 235)', /* Matching bg-gray-200 */
-                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
+                        backgroundColor: 'rgb(229, 231, 235)', // Matching bg-gray-200
+                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
                       }}
                     >
                       {header.isPlaceholder
@@ -332,36 +326,26 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
             <TableBody>
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                    className="hover:bg-gray-50"
-                  >
+                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} className="hover:bg-gray-50">
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell 
+                      <TableCell
                         key={cell.id}
                         className="px-4 py-3"
                         style={{
                           whiteSpace: 'nowrap',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
-                          maxWidth: '300px'
+                          maxWidth: '300px',
                         }}
                       >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
                     No results.
                   </TableCell>
                 </TableRow>
@@ -370,6 +354,7 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
           </Table>
         </div>
       </div>
+
 
       {/* Pagination controls - full width without horizontal scroll */}
       <div className="w-full flex items-center justify-between space-x-2 py-4">
