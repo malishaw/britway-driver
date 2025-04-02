@@ -16,7 +16,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { format } from "date-fns";
+import { format, isWithinInterval, parse } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -35,10 +35,8 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { Booking } from "../typings";
-import { GetServerSideProps } from "next";
 import DriverCell from "./DriverCell";
-
-import Spinner from "@/components/ui/spinner"; // Import a Spinner component
+import Spinner from "@/components/ui/spinner";
 
 declare module "@tanstack/table-core" {
   interface FilterFns {
@@ -46,40 +44,59 @@ declare module "@tanstack/table-core" {
   }
 }
 
-const dateBetweenFilterFn: FilterFn<any> = (row, columnId, value) => {
-  const dateTime = row.getValue(columnId) as string;
-  if (!dateTime) return false; // Skip if no date
+// Improved date filter function
+const dateBetweenFilterFn: FilterFn<any> = (row, columnId, filterValue) => {
+  // Early return if no filter values
+  if (!filterValue || !Array.isArray(filterValue) || !filterValue[0]) {
+    return true;
+  }
 
-  // Extract the date part
-  const [day, month, year] = dateTime.split("/").map(Number);
-  const rowDate = new Date(year, month - 1, day); // Convert to Date object
+  const dateStr = row.getValue(columnId) as string;
+  if (!dateStr) return false;
 
-  const [start, end] = value.map((date: string) => {
-    if (!date) return null;
-    const [sDay, sMonth, sYear] = date.split("/").map(Number);
-    return new Date(sYear, sMonth - 1, sDay);
-  });
-
-  if (start && end) return rowDate >= start && rowDate <= end;
-  if (start) return rowDate >= start;
-  if (end) return rowDate <= end;
-  return true;
+  try {
+    // Parse the date string from DD/MM/YYYY format
+    const rowDate = parse(dateStr, "dd/MM/yyyy", new Date());
+    
+    // Get start and end dates from filter value
+    const startDateStr = filterValue[0];
+    const endDateStr = filterValue[1];
+    
+    if (startDateStr && endDateStr) {
+      const startDate = parse(startDateStr, "dd/MM/yyyy", new Date());
+      const endDate = parse(endDateStr, "dd/MM/yyyy", new Date());
+      
+      // Add one day to end date to make it inclusive
+      endDate.setDate(endDate.getDate() + 1);
+      
+      return isWithinInterval(rowDate, { start: startDate, end: endDate });
+    } else if (startDateStr) {
+      const startDate = parse(startDateStr, "dd/MM/yyyy", new Date());
+      return rowDate >= startDate;
+    } else if (endDateStr) {
+      const endDate = parse(endDateStr, "dd/MM/yyyy", new Date());
+      // Add one day to end date to make it inclusive
+      endDate.setDate(endDate.getDate() + 1);
+      return rowDate <= endDate;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("Error filtering date:", error);
+    return true;
+  }
 };
 
 export function BookingTable({ data = [] }: { data: Booking[] }) {
   const [loading, setLoading] = React.useState(true);
-  const tableContainerRef = React.useRef<HTMLDivElement>(null);
 
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: "journeyDate", desc: true },
   ]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [dateFrom, setDateFrom] = React.useState<Date>();
-  const [dateTo, setDateTo] = React.useState<Date>();
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [dateFrom, setDateFrom] = React.useState<Date | undefined>();
+  const [dateTo, setDateTo] = React.useState<Date | undefined>();
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
   const columns: ColumnDef<Booking>[] = [
@@ -147,18 +164,25 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
       rowSelection,
     },
     filterFns: {
-      dateBetweenFilterFn: dateBetweenFilterFn,
+      dateBetweenFilterFn,
     },
   });
 
+  // Update date filter whenever dateFrom or dateTo changes
   React.useEffect(() => {
-    table
-      .getColumn("journeyDate")
-      ?.setFilterValue([
-        dateFrom ? format(dateFrom, "dd/MM/yyyy") : "",
-        dateTo ? format(dateTo, "dd/MM/yyyy") : "",
-      ]);
-  }, [dateFrom, dateTo]);
+    // Format dates for the filter
+    const formattedDateFrom = dateFrom ? format(dateFrom, "dd/MM/yyyy") : "";
+    const formattedDateTo = dateTo ? format(dateTo, "dd/MM/yyyy") : "";
+    
+    // Apply filter with timeout to avoid too frequent updates
+    const journeyDateColumn = table.getColumn("journeyDate");
+    if (journeyDateColumn) {
+      journeyDateColumn.setFilterValue([formattedDateFrom, formattedDateTo]);
+    }
+    
+    // Log for debugging
+    console.log("Date filter updated:", formattedDateFrom, formattedDateTo);
+  }, [dateFrom, dateTo, table]);
 
   React.useEffect(() => {
     // Simulate loading data
@@ -175,7 +199,7 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
 
   return (
     <div className="w-full">
-      {/* Filter controls - full width without horizontal scroll */}
+      {/* Filter controls */}
       <div className="flex flex-wrap items-center gap-4 pb-4">
         <Popover>
           <PopoverTrigger asChild>
@@ -241,109 +265,93 @@ export function BookingTable({ data = [] }: { data: Booking[] }) {
         </p>
       </div>
 
-      {/* Table container with contained horizontal and vertical scrolling */}
-      <div 
-        ref={tableContainerRef}
-        className="relative border rounded-md w-full"
-      >
-        <div className="overflow-auto max-h-[70vh]" style={{
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#cbd5e0 #f7fafc'
-        }}>
-          <Table>
-            <TableHeader className="sticky top-0 z-20">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="bg-gray-200">
-                  {headerGroup.headers.map((header) => (
-                    <TableHead 
-                      key={header.id}
-                      className="px-4 py-3 font-medium text-sm sticky top-0 z-20 bg-gray-200 shadow-sm"
+      {/* Table container */}
+      <div className="relative border rounded-md w-full overflow-auto max-h-[70vh]">
+        <Table>
+          <TableHeader className="sticky top-0 bg-gray-200 z-10">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead 
+                    key={header.id} 
+                    className="px-4 py-3 sticky top-0 bg-gray-200"
+                    style={{
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell 
+                      key={cell.id} 
+                      className="px-4 py-3"
                       style={{
                         whiteSpace: 'nowrap',
-                        position: 'sticky',
-                        top: 0,
-                        backgroundColor: 'rgb(229, 231, 235)', /* Matching bg-gray-200 */
-                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        maxWidth: '300px'
                       }}
                     >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
                   ))}
                 </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                    className="hover:bg-gray-50"
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell 
-                        key={cell.id}
-                        className="px-4 py-3"
-                        style={{
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          maxWidth: '300px'
-                        }}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
 
-      {/* Pagination controls - full width without horizontal scroll */}
-      <div className="w-full flex items-center justify-end space-x-2 py-4">
-        <div className="flex items-center space-x-6">
-          <span className="text-sm text-gray-700">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
-          </span>
-          <div className="space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </Button>
-          </div>
+      {/* Pagination controls */}
+      <div className="w-full flex items-center justify-between space-x-2 py-4">
+        <div className="text-sm text-gray-700">
+          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+        </div>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
         </div>
       </div>
     </div>
